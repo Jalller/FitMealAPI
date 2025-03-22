@@ -1,0 +1,84 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+@startuml
+skinparam style strictuml
+
+package "Entities" {
+    class Meal {
+        + Long id
+        + String mealId
+        + String name
+        + String category
+        + String area
+        + String instructions
+        + String imageUrl
+    }
+
+    class Ingredient {
+        + Long id
+        + String ingredientName
+        + Meal meal
+    }
+
+    class Workout {
+        + Long id
+        + String workoutId
+        + String name
+        + String category
+        + String description
+    }
+}
+
+package "DTOs" {
+    class MealDTO {
+        + String idMeal
+        + String strMeal
+        + String strCategory
+        + String strArea
+        + String strInstructions
+        + String strMealThumb
+        + List<String> ingredients
+    }
+
+    class WorkoutDTO {
+        + String id
+        + String name
+        + String category
+        + String description
+    }
+}
+
+package "DAOs" {
+    interface MealDAO
+    interface IngredientDAO
+    interface WorkoutDAO
+}
+
+package "Services" {
+    class MealService {
+        + MealDTO fetchRandomMeal()
+    }
+
+    class WorkoutService {
+        + WorkoutDTO fetchRandomWorkout()
+    }
+}
+
+Meal "1" -- "0..*" Ingredient : has
+MealDTO -[hidden]-> Ingredient
+WorkoutDTO -[hidden]-> MealDTO
+
+MealDTO --> Meal
+WorkoutDTO --> Workout
+
+MealDAO --> Meal
+IngredientDAO --> Ingredient
+WorkoutDAO --> Workout
+
+MealService --> MealDAO
+WorkoutService --> WorkoutDAO
+MealService --> MealDTO
+WorkoutService --> WorkoutDTO
+@enduml

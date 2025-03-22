@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+skinparam style strictuml
+
+package "Domain Model" {
+    class Meal {
+        + mealId: String
+        + name: String
+        + category: String
+        + area: String
+        + instructions: String
+        + imageUrl: String
+    }
+
+    class Ingredient {
+        + ingredientName: String
+    }
+
+    class Workout {
+        + workoutId: String
+        + name: String
+        + category: String
+        + description: String
+    }
+
+    class User {
+        + userId: Long
+        + username: String
+        + email: String
+        + weight: Double
+        + height: Double
+        + activityLevel: String
+    }
+
+    class MealPlan {
+        + planId: Long
+        + date: Date
+    }
+
+    class WorkoutLog {
+        + logId: Long
+        + date: Date
+        + notes: String
+    }
+
+    ' Relationships
+    Meal "1" -- "0..*" Ingredient : has
+    User "1" -- "0..*" MealPlan : creates
+    User "1" -- "0..*" WorkoutLog : logs
+    MealPlan "1" -- "3" Meal : "includes (breakfast, lunch, dinner)"
+    WorkoutLog "1" -- "1..*" Workout : contains
+}
+@enduml
+

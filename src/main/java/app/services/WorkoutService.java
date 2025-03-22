@@ -1,6 +1,8 @@
 package app.services;
 
 import app.dtos.WorkoutDTO;
+import app.entities.Workout;
+import app.daos.WorkoutDAO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -13,9 +15,16 @@ import java.util.Random;
 
 @Service
 public class WorkoutService {
-    private static final String API_URL = "https://wger.de/api/v2/exerciseinfo/?language=2"; // ✅ Correct endpoint
+    private static final String API_URL = "https://wger.de/api/v2/exerciseinfo/?language=2";
+    private final WorkoutDAO workoutDAO;
+    private final ObjectMapper objectMapper;
 
-    public WorkoutDTO fetchRandomWorkout() {
+    public WorkoutService(WorkoutDAO workoutDAO) {
+        this.workoutDAO = workoutDAO;
+        this.objectMapper = new ObjectMapper();
+    }
+
+    public Workout fetchAndSaveRandomWorkout() {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
@@ -23,16 +32,13 @@ public class WorkoutService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode rootNode = mapper.readTree(response.body());
+            JsonNode rootNode = objectMapper.readTree(response.body());
 
-            // Check if API returned results
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
                 System.out.println("No workout data found in API response.");
                 return null;
             }
 
-            // Pick a random workout from the results
             Random random = new Random();
             int randomIndex = random.nextInt(rootNode.get("results").size());
             JsonNode workoutNode = rootNode.get("results").get(randomIndex);
@@ -41,7 +47,6 @@ public class WorkoutService {
                     ? workoutNode.get("category").get("name").asText()
                     : "Unknown Category";
 
-            // Extract name & description from `translations`
             String name = "Unknown Workout";
             String description = "No description available.";
 
@@ -55,19 +60,19 @@ public class WorkoutService {
                 }
             }
 
-            // Create DTO
-            WorkoutDTO workout = new WorkoutDTO(
+            Workout workout = new Workout(
                     workoutNode.get("id").asText(),
                     name,
                     category,
                     description
             );
 
-            // Print only the necessary workout details
+            workout = workoutDAO.save(workout); // Save workout to DB
+
+            System.out.println("\n===== Workout Saved to Database =====");
             System.out.println("Name: " + workout.getName());
             System.out.println("Category: " + workout.getCategory());
             System.out.println("Description: " + workout.getDescription());
-            System.out.println("Workout Fetch Successful!");
 
             return workout;
         } catch (Exception e) {
