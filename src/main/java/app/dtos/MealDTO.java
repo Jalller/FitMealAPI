@@ -1,5 +1,6 @@
 package app.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true) // Ignores unknown fields
 public class MealDTO {
     private String idMeal;
     private String strMeal;
@@ -19,6 +21,4 @@ public class MealDTO {
     private String strInstructions;
     private String strMealThumb;
     private List<String> ingredients;
-
 }
-

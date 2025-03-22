@@ -1,17 +1,37 @@
 package app;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import app.dtos.MealDTO;
+import app.services.MealService;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+@SpringBootApplication
+@EntityScan(basePackages = "app.entities")
+public class Main {
+
+    private final MealService mealService;
+
+    public Main(MealService mealService) {
+        this.mealService = mealService;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Main.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner run() {
+        return args -> {
+            System.out.println("===== Fetching Random Meal from TheMealDB =====");
+            MealDTO meal = mealService.fetchRandomMeal();
+            if (meal != null) {
+                System.out.println("✅ Meal Fetch Successful!");
+            } else {
+                System.out.println("❌ Meal Fetch Failed.");
+            }
+        };
     }
 }
