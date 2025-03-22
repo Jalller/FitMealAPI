@@ -43,14 +43,14 @@ public class MealService {
                 MealDTO meal = mapper.treeToValue(mealNode, MealDTO.class);
                 meal.setIngredients(ingredients); // Add extracted ingredients
 
-                // ✅ Use correct getter methods (`getStrMeal()`, `getStrCategory()`, etc.)
+
                 System.out.println("\n===== Random Meal Fetched =====");
-                System.out.println("🍽️ Meal: " + meal.getStrMeal());
-                System.out.println("📌 Category: " + meal.getStrCategory());
-                System.out.println("🌍 Area: " + meal.getStrArea());
-                System.out.println("📝 Instructions: " + meal.getStrInstructions());
-                System.out.println("🖼️ Image: " + meal.getStrMealThumb());
-                System.out.println("🥗 Ingredients: " + ingredients);
+                System.out.println("Meal: " + meal.getStrMeal());
+                System.out.println("Category: " + meal.getStrCategory());
+                System.out.println("Area: " + meal.getStrArea());
+                System.out.println("Instructions: " + meal.getStrInstructions());
+                System.out.println("Image: " + meal.getStrMealThumb());
+                System.out.println("Ingredients: " + ingredients);
 
                 return meal;
             }
