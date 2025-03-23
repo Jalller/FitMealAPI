@@ -48,13 +48,10 @@ public class Main {
             } else {
                 System.out.println("Workout Save Failed");
             }
-            System.out.println("===== Fetching & Saving Multiple Meals =====");
-            mealService.fetchAndSaveMultipleMeals();
-            System.out.println("Saved multiple meals");
 
-//            System.out.println("\n===== Fetching & Saving Multiple Workouts =====");
-//            workoutService.fetchAndSaveMultipleWorkouts();
-//            System.out.println("Saved multiple workouts");
+            System.out.println("\n===== Fetching & Saving Multiple Workouts =====");
+            workoutService.fetchAndSaveMultipleWorkouts();
+            System.out.println("Saved multiple workouts");
         };
     }
 }

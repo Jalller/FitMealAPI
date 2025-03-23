@@ -1,6 +1,5 @@
 package app.controllers;
 
-import app.entities.Workout;
 import app.services.WorkoutService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,20 +14,17 @@ public class WorkoutController {
         this.workoutService = workoutService;
     }
 
-    // Fetch and save a random workout
+    // ✅ Fetch & save a random workout
     @PostMapping("/fetch-random")
-    public ResponseEntity<Workout> fetchAndSaveRandomWorkout() {
-        Workout workout = workoutService.fetchAndSaveRandomWorkout();
-        if (workout != null) {
-            return ResponseEntity.ok(workout);
-        } else {
-            return ResponseEntity.status(500).body(null);
-        }
+    public ResponseEntity<String> fetchAndSaveRandomWorkout() {
+        workoutService.fetchAndSaveRandomWorkout();
+        return ResponseEntity.ok("Fetched and saved a random workout.");
     }
-//    // Fetch and save multiple workouts
-//    @PostMapping("/fetch-multiple")
-//    public ResponseEntity<String> fetchAndSaveMultipleWorkouts() {
-//        workoutService.fetchAndSaveMultipleWorkouts();
-//        return ResponseEntity.ok("fetched and saved multiple workouts");
-//    }
+
+    // ✅ Fetch & save multiple workouts
+    @PostMapping("/fetch-multiple")
+    public ResponseEntity<String> fetchAndSaveMultipleWorkouts() {
+        workoutService.fetchAndSaveMultipleWorkouts();
+        return ResponseEntity.ok("Fetched and saved multiple workouts.");
+    }
 }
