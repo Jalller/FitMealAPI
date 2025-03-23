@@ -29,10 +29,16 @@ public class Main {
     @Bean
     public CommandLineRunner run() {
         return args -> {
-            System.out.println("===== Fetching & Saving Meal =====");
+            //Gem mange meals fr adb
+            System.out.println("===== Fetching & Saving Multiple Meals =====");
+            mealService.fetchAndSaveMultipleMeals();
+            System.out.println("✅ Multiple meals saved to DB!");
+
+            //Gem et meal
+            System.out.println("\n===== Fetching & Saving One Random Meal =====");
             Meal meal = mealService.fetchAndSaveRandomMeal();
             if (meal != null) {
-                System.out.println("Meal Saved to DB!");
+                System.out.println("✅ One random meal saved to DB!");
             } else {
                 System.out.println("Meal Save Failed.");
             }
@@ -40,7 +46,7 @@ public class Main {
             System.out.println("\n===== Fetching & Saving Workout =====");
             Workout workout = workoutService.fetchAndSaveRandomWorkout();
             if (workout != null) {
-                System.out.println("Workout Saved to DB!");
+                System.out.println("✅ Workout Saved to DB!");
             } else {
                 System.out.println("Workout Save Failed.");
             }

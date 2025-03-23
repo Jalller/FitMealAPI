@@ -1,10 +1,7 @@
 package app.services;
 
-import app.dtos.MealDTO;
 import app.entities.Meal;
-import app.entities.Ingredient;
 import app.daos.MealDAO;
-import app.daos.IngredientDAO;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -13,25 +10,25 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MealService {
-    private static final String API_URL = "https://www.themealdb.com/api/json/v1/1/random.php";
-    private final MealDAO mealDAO;
-    private final IngredientDAO ingredientDAO;
+    private static final String RANDOM_MEAL_API = "https://www.themealdb.com/api/json/v1/1/random.php";
+    private static final String CATEGORY_MEAL_API = "https://www.themealdb.com/api/json/v1/1/filter.php?c=";
 
-    public MealService(MealDAO mealDAO, IngredientDAO ingredientDAO) {
+    private final MealDAO mealDAO;
+
+    public MealService(MealDAO mealDAO) {
         this.mealDAO = mealDAO;
-        this.ingredientDAO = ingredientDAO;
     }
 
+    // ✅ Fetch & save one random meal
     public Meal fetchAndSaveRandomMeal() {
         try {
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(API_URL))
+                    .uri(URI.create(RANDOM_MEAL_API))
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -40,43 +37,58 @@ public class MealService {
 
             if (rootNode.has("meals") && rootNode.get("meals").isArray()) {
                 JsonNode mealNode = rootNode.get("meals").get(0);
-                MealDTO mealDTO = mapper.treeToValue(mealNode, MealDTO.class);
-
                 Meal meal = new Meal(
-                        mealDTO.getIdMeal(),
-                        mealDTO.getStrMeal(),
-                        mealDTO.getStrCategory(),
-                        mealDTO.getStrArea(),
-                        mealDTO.getStrInstructions(),
-                        mealDTO.getStrMealThumb()
+                        mealNode.get("idMeal").asText(),
+                        mealNode.get("strMeal").asText(),
+                        mealNode.get("strCategory").asText(),
+                        mealNode.get("strArea").asText(),
+                        mealNode.get("strInstructions").asText(),
+                        mealNode.get("strMealThumb").asText()
                 );
 
-                meal = mealDAO.save(meal); // Save meal to DB
-
-                // Extract and save ingredients
-                List<Ingredient> ingredients = new ArrayList<>();
-                for (int i = 1; i <= 20; i++) {
-                    String ingredientName = mealNode.get("strIngredient" + i).asText();
-                    if (ingredientName != null && !ingredientName.isEmpty() && !ingredientName.equals("null")) {
-                        Ingredient ingredient = new Ingredient(ingredientName, meal);
-                        ingredients.add(ingredient);
-                    }
-                }
-                ingredientDAO.saveAll(ingredients); // Save ingredients to DB
-
-                System.out.println("\n===== Meal Saved to Database =====");
-                System.out.println("Meal: " + meal.getName());
-                System.out.println("Category: " + meal.getCategory());
-                System.out.println("Area: " + meal.getArea());
-                System.out.println("Instructions: " + meal.getInstructions());
-                System.out.println("Image: " + meal.getImageUrl());
-                System.out.println("Ingredients: " + ingredients);
-
-                return meal;
+                return mealDAO.save(meal); // Save meal to DB
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // Fetch & save multiple meals at once
+    public void fetchAndSaveMultipleMeals() {
+        String[] categories = {"Chicken", "Beef", "Vegetarian", "Seafood"};
+
+        for (String category : categories) {
+            String apiUrl = CATEGORY_MEAL_API + category;
+            try {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(apiUrl))
+                        .build();
+
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode rootNode = mapper.readTree(response.body());
+
+                if (rootNode.has("meals") && rootNode.get("meals").isArray()) {
+                    for (JsonNode mealNode : rootNode.get("meals")) {
+                        Meal meal = new Meal(
+                                mealNode.get("idMeal").asText(),
+                                mealNode.get("strMeal").asText(),
+                                category, "", "", mealNode.get("strMealThumb").asText()
+                        );
+                        mealDAO.save(meal); // Save meal to DB
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("✅ Fetched and saved multiple meals from categories.");
+    }
+
+    // Get all meals
+    public List<Meal> getAllMeals() {
+        return mealDAO.findAll();
     }
 }
