@@ -38,6 +38,6 @@ public class MealController {
     @PostMapping("/fetch-multiple")
     public ResponseEntity<String> fetchAndSaveMultipleMeals() {
         mealService.fetchAndSaveMultipleMeals();
-        return ResponseEntity.ok("✅ Multiple meals have been fetched and saved.");
+        return ResponseEntity.ok("fetched and saved multiple meals");
     }
 }

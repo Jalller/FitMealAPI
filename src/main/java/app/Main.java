@@ -29,27 +29,32 @@ public class Main {
     @Bean
     public CommandLineRunner run() {
         return args -> {
-            //Gem mange meals fr adb
             System.out.println("===== Fetching & Saving Multiple Meals =====");
             mealService.fetchAndSaveMultipleMeals();
-            System.out.println("✅ Multiple meals saved to DB!");
+            System.out.println("Saved multiple meals");
 
-            //Gem et meal
-            System.out.println("\n===== Fetching & Saving One Random Meal =====");
+            System.out.println("\n===== Fetching & Saving Random Meal =====");
             Meal meal = mealService.fetchAndSaveRandomMeal();
             if (meal != null) {
-                System.out.println("✅ One random meal saved to DB!");
+                System.out.println("Saved random meal");
             } else {
-                System.out.println("Meal Save Failed.");
+                System.out.println("Meal Save Failed");
             }
 
             System.out.println("\n===== Fetching & Saving Workout =====");
             Workout workout = workoutService.fetchAndSaveRandomWorkout();
             if (workout != null) {
-                System.out.println("✅ Workout Saved to DB!");
+                System.out.println("Saved workout");
             } else {
-                System.out.println("Workout Save Failed.");
+                System.out.println("Workout Save Failed");
             }
+            System.out.println("===== Fetching & Saving Multiple Meals =====");
+            mealService.fetchAndSaveMultipleMeals();
+            System.out.println("Saved multiple meals");
+
+//            System.out.println("\n===== Fetching & Saving Multiple Workouts =====");
+//            workoutService.fetchAndSaveMultipleWorkouts();
+//            System.out.println("Saved multiple workouts");
         };
     }
 }

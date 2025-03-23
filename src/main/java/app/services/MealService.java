@@ -23,7 +23,7 @@ public class MealService {
         this.mealDAO = mealDAO;
     }
 
-    // ✅ Fetch & save one random meal
+    // Fetch & save one random meal
     public Meal fetchAndSaveRandomMeal() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -84,7 +84,7 @@ public class MealService {
                 e.printStackTrace();
             }
         }
-        System.out.println("✅ Fetched and saved multiple meals from categories.");
+        System.out.println("Fetched and saved multiple meals from categories");
     }
 
     // Get all meals

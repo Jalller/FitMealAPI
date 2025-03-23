@@ -1,6 +1,5 @@
 package app.services;
 
-import app.dtos.WorkoutDTO;
 import app.entities.Workout;
 import app.daos.WorkoutDAO;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -16,14 +15,15 @@ import java.util.Random;
 @Service
 public class WorkoutService {
     private static final String API_URL = "https://wger.de/api/v2/exerciseinfo/?language=2";
+
     private final WorkoutDAO workoutDAO;
-    private final ObjectMapper objectMapper;
 
     public WorkoutService(WorkoutDAO workoutDAO) {
         this.workoutDAO = workoutDAO;
-        this.objectMapper = new ObjectMapper();
     }
 
+
+    // Fetch and save a random workout
     public Workout fetchAndSaveRandomWorkout() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -32,13 +32,16 @@ public class WorkoutService {
                     .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            JsonNode rootNode = objectMapper.readTree(response.body());
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode rootNode = mapper.readTree(response.body());
 
+            // Ensure API response contains workout data
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
-                System.out.println("No workout data found in API response.");
+                System.out.println("No workout data found.");
                 return null;
             }
 
+            // Pick a random workout from the response
             Random random = new Random();
             int randomIndex = random.nextInt(rootNode.get("results").size());
             JsonNode workoutNode = rootNode.get("results").get(randomIndex);
@@ -47,6 +50,7 @@ public class WorkoutService {
                     ? workoutNode.get("category").get("name").asText()
                     : "Unknown Category";
 
+            // Extract name & description from `translations`
             String name = "Unknown Workout";
             String description = "No description available.";
 
@@ -60,14 +64,14 @@ public class WorkoutService {
                 }
             }
 
+            // Save to database
             Workout workout = new Workout(
                     workoutNode.get("id").asText(),
                     name,
                     category,
                     description
             );
-
-            workout = workoutDAO.save(workout); // Save workout to DB
+            workout = workoutDAO.save(workout);
 
             System.out.println("\n===== Workout Saved to Database =====");
             System.out.println("Name: " + workout.getName());
@@ -75,9 +79,12 @@ public class WorkoutService {
             System.out.println("Description: " + workout.getDescription());
 
             return workout;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
+
+
 }
