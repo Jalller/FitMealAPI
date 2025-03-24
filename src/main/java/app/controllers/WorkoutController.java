@@ -68,6 +68,31 @@ public class WorkoutController {
         return ResponseEntity.ok("Workout deleted successfully by ID!");
     }
 
+    @PutMapping("/update-last")
+    public ResponseEntity<Workout> updateLastWorkout() {
+        return workoutService.getLastWorkout()
+                .map(workout -> {
+                    WorkoutDTO updatedWorkoutDTO = new WorkoutDTO(
+                            workout.getWorkoutId(),
+                            "Updated Last Workout",
+                            "Updated Category",
+                            "Updated workout description..."
+                    );
+                    Workout updatedWorkout = workoutService.updateWorkout(workout.getId(), updatedWorkoutDTO);
+                    return ResponseEntity.ok(updatedWorkout);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/delete-last")
+    public ResponseEntity<String> deleteLastWorkout() {
+        return workoutService.getLastWorkout()
+                .map(workout -> {
+                    workoutService.deleteWorkout(workout.getId());
+                    return ResponseEntity.ok("Last workout deleted successfully!");
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
 
 

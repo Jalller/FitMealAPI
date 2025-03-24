@@ -33,85 +33,101 @@ public class Main {
     @Bean
     public CommandLineRunner run() {
         return args -> {
-            System.out.println("===== Fetching & Saving Multiple Meals =====");
+            System.out.println("===== fetching & saving multiple meals =====");
             mealService.fetchAndSaveMultipleMeals();
-            System.out.println("Saved multiple meals");
+            System.out.println("saved multiple meals");
 
-            System.out.println("\n===== Fetching & Saving Random Meal =====");
+            System.out.println("\n===== fetching & saving random meal =====");
             Meal meal = mealService.fetchAndSaveRandomMeal();
             if (meal != null) {
-                System.out.println("Saved random meal: " + meal.getName());
+                System.out.println("saved random meal: " + meal.getName());
             } else {
-                System.out.println("Meal Save Failed");
+                System.out.println("meal save failed");
             }
 
-            System.out.println("\n===== Fetching & Saving Workout =====");
+            System.out.println("\n===== fetching & saving workout =====");
             Workout workout = workoutService.fetchAndSaveRandomWorkout();
             if (workout != null) {
-                System.out.println("Saved workout: " + workout.getName());
+                System.out.println("saved workout: " + workout.getName());
             } else {
-                System.out.println("Workout Save Failed");
+                System.out.println("workout save failed");
             }
 
-            System.out.println("\n===== Fetching & Saving Multiple Workouts =====");
+            System.out.println("\n===== fetching & saving multiple workouts =====");
             workoutService.fetchAndSaveMultipleWorkouts();
-            System.out.println("Saved multiple workouts");
+            System.out.println("saved multiple workouts");
 
-            System.out.println("All Meal IDs: " + mealService.getAllMeals().stream().map(Meal::getId).toList());
-            System.out.println("All Workout IDs: " + workoutService.getAllWorkouts().stream().map(Workout::getId).toList());
+            //System.out.println("all meal ids: " + mealService.getAllMeals().stream().map(Meal::getId).toList());
+            //System.out.println("all workout ids: " + workoutService.getAllWorkouts().stream().map(Workout::getId).toList());
 
-            // ✅ Update first available meal
-            System.out.println("\n===== Updating First Available Meal =====");
+            // update first available meal
+            System.out.println("\n===== updating first available meal =====");
             mealService.updateFirstAvailableMeal();
 
-            // ✅ Update meal by specific ID (e.g., ID = 10)
-            System.out.println("\n===== Updating Meal by ID =====");
+            // update meal by specific id
+            System.out.println("\n===== updating meal by id =====");
             mealService.updateMealById(10L, new MealDTO(
                     "10",
-                    "Updated Meal Name by ID",
-                    "Updated Category",
-                    "Updated Area",
-                    "Updated Instructions...",
+                    "updated meal name by id",
+                    "updated category",
+                    "updated area",
+                    "updated instructions...",
                     "https://example.com/updated-image.jpg",
                     null
             ));
 
-            // ✅ Update first available workout
-            System.out.println("\n===== Updating First Available Workout =====");
+            // update last available meal
+            System.out.println("\n===== updating last available meal =====");
+            mealService.updateLastAvailableMeal();
+
+            // update first available workout
+            System.out.println("\n===== updating first available workout =====");
             workoutService.updateFirstAvailableWorkout();
 
-            // ✅ Update workout by specific ID (e.g., ID = 15)
-            System.out.println("\n===== Updating Workout by ID =====");
+            // update workout by specific id (e.g., id = 15)
+            System.out.println("\n===== updating workout by id =====");
             workoutService.updateWorkoutById(15L, new WorkoutDTO(
                     "15",
-                    "Updated Workout Name by ID",
-                    "Updated Category",
-                    "Updated workout description..."
+                    "updated workout name by id",
+                    "updated category",
+                    "updated workout description..."
             ));
 
-            // ✅ Delete first available meal
-            System.out.println("\n===== Deleting First Available Meal =====");
+            // update last available workout
+            System.out.println("\n===== updating last available workout =====");
+            workoutService.updateLastAvailableWorkout();
+
+            // delete first available meal
+            System.out.println("\n===== deleting first available meal =====");
             mealService.deleteFirstAvailableMeal();
 
-            // ✅ Delete meal by specific ID (e.g., ID = 20)
-            System.out.println("\n===== Deleting Meal by ID =====");
+            // delete meal by specific id (e.g., id = 20)
+            System.out.println("\n===== deleting meal by id =====");
             mealService.deleteMealById(20L);
 
-            // ✅ Delete first available workout
-            System.out.println("\n===== Deleting First Available Workout =====");
+            // delete last available meal
+            System.out.println("\n===== deleting last available meal =====");
+            mealService.deleteLastAvailableMeal();
+
+            // delete first available workout
+            System.out.println("\n===== deleting first available workout =====");
             workoutService.deleteFirstAvailableWorkout();
 
-            // ✅ Delete workout by specific ID (e.g., ID = 25)
-            System.out.println("\n===== Deleting Workout by ID =====");
+            // delete workout by specific id
+            System.out.println("\n===== deleting workout by id =====");
             workoutService.deleteWorkoutById(25L);
+
+            // delete last available workout
+            System.out.println("\n===== deleting last available workout =====");
+            workoutService.deleteLastAvailableWorkout();
         };
     }
-//    Optional<Meal> mealToUpdate = mealService.getAllMeals().stream()
-//            .sorted((m1, m2) -> m2.getId().compareTo(m1.getId())) // Sort by ID descending (latest first)
+//    optional<Meal> mealToUpdate = mealService.getAllMeals().stream()
+//            .sorted((m1, m2) -> m2.getId().compareTo(m1.getId())) // sort by id descending (latest first)
 //            .findFirst();
-//    Optional<Workout> workoutToUpdate = workoutService.getAllWorkouts().stream()
-//            .sorted((w1, w2) -> w2.getId().compareTo(w1.getId())) // Sort by ID descending (latest first)
+//    optional<Workout> workoutToUpdate = workoutService.getAllWorkouts().stream()
+//            .sorted((w1, w2) -> w2.getId().compareTo(w1.getId())) // sort by id descending (latest first)
 //            .findFirst();
 
-    //Updates +1 - deletes the next in row FIX
+    // updates +1 - deletes the next in row fix
 }

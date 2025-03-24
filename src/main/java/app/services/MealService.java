@@ -12,6 +12,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MealService {
@@ -24,7 +25,7 @@ public class MealService {
         this.mealDAO = mealDAO;
     }
 
-    // Fetch & save one random meal
+    // fetch & save one random meal
     public Meal fetchAndSaveRandomMeal() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -47,7 +48,7 @@ public class MealService {
                         mealNode.get("strMealThumb").asText()
                 );
 
-                return mealDAO.save(meal); // Save meal to DB
+                return mealDAO.save(meal);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,7 +56,7 @@ public class MealService {
         return null;
     }
 
-    // Fetch & save multiple meals at once
+    // fetch & save multiple meals at once
     public void fetchAndSaveMultipleMeals() {
         String[] categories = {"Chicken", "Beef", "Vegetarian", "Seafood"};
 
@@ -78,21 +79,22 @@ public class MealService {
                                 mealNode.get("strMeal").asText(),
                                 category, "", "", mealNode.get("strMealThumb").asText()
                         );
-                        mealDAO.save(meal); // Save meal to DB
+                        mealDAO.save(meal);
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        System.out.println("Fetched and saved multiple meals from categories");
+        System.out.println("fetched and saved multiple meals from categories");
     }
 
-    // Get all meals
+    // get all meals
     public List<Meal> getAllMeals() {
         return mealDAO.findAll();
     }
-    // Update meal find by ID update fields save updated to db
+
+    // update meal by id
     public Meal updateMeal(Long id, MealDTO mealDTO) {
         return mealDAO.findById(id).map(meal -> {
             meal.setName(mealDTO.getStrMeal());
@@ -101,33 +103,33 @@ public class MealService {
             meal.setInstructions(mealDTO.getStrInstructions());
             meal.setImageUrl(mealDTO.getStrMealThumb());
             return mealDAO.save(meal);
-        }).orElseThrow(() -> new RuntimeException("Meal not found with id: " + id));
-
-
+        }).orElseThrow(() -> new RuntimeException("meal not found with id: " + id));
     }
-    //delete meal by ID
+
+    // delete meal by id
     public void deleteMeal(Long id) {
         if (mealDAO.existsById(id)) {
             mealDAO.deleteById(id);
-            System.out.println("Meal deleted: ID " + id);
+            System.out.println("meal deleted: id " + id);
         } else {
-            throw new RuntimeException("Meal not found with ID: " + id);
+            throw new RuntimeException("meal not found with id: " + id);
         }
     }
+
     // update the first available meal
     public void updateFirstAvailableMeal() {
         mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
-            meal.setName("Updated Meal Name");
-            meal.setCategory("Updated Category");
-            meal.setArea("Updated Area");
-            meal.setInstructions("Updated Instructions...");
+            meal.setName("updated meal name");
+            meal.setCategory("updated category");
+            meal.setArea("updated area");
+            meal.setInstructions("updated instructions...");
             meal.setImageUrl("https://example.com/updated-image.jpg");
             mealDAO.save(meal);
-            System.out.println("Meal updated: " + meal.getName());
+            System.out.println("meal updated: " + meal.getName());
         });
     }
 
-    // update meal by ID
+    // update meal by id
     public void updateMealById(Long id, MealDTO mealDTO) {
         mealDAO.findById(id).ifPresent(meal -> {
             meal.setName(mealDTO.getStrMeal());
@@ -136,7 +138,7 @@ public class MealService {
             meal.setInstructions(mealDTO.getStrInstructions());
             meal.setImageUrl(mealDTO.getStrMealThumb());
             mealDAO.save(meal);
-            System.out.println("Meal updated by ID: " + meal.getName());
+            System.out.println("meal updated by id: " + meal.getName());
         });
     }
 
@@ -144,17 +146,46 @@ public class MealService {
     public void deleteFirstAvailableMeal() {
         mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
             mealDAO.deleteById(meal.getId());
-            System.out.println("Meal deleted: " + meal.getName());
+            System.out.println("meal deleted: " + meal.getName());
         });
     }
 
-    // delete meal by ID
+    // delete meal by id
     public void deleteMealById(Long id) {
         mealDAO.findById(id).ifPresent(meal -> {
             mealDAO.deleteById(id);
-            System.out.println("Meal deleted by ID: " + meal.getName());
+            System.out.println("meal deleted by id: " + meal.getName());
         });
     }
 
+    // get the last available meal
+    public Optional<Meal> getLastMeal() {
+        return mealDAO.findAll().stream()
+                .sorted((m1, m2) -> m2.getId().compareTo(m1.getId()))
+                .findFirst();
+    }
 
+    // update the last available meal
+    public void updateLastAvailableMeal() {
+        getLastMeal().ifPresent(meal -> {
+            meal.setName("updated last meal name");
+            meal.setCategory("updated last category");
+            meal.setArea("updated last area");
+            meal.setInstructions("updated last instructions...");
+            meal.setImageUrl("https://example.com/updated-last-image.jpg");
+            mealDAO.save(meal);
+            System.out.println("meal updated: " + meal.getName());
+        });
+    }
+
+    // delete the last available meal
+    public void deleteLastAvailableMeal() {
+        getLastMeal().ifPresentOrElse(
+                meal -> {
+                    mealDAO.deleteById(meal.getId());
+                    System.out.println("meal deleted: " + meal.getName());
+                },
+                () -> { throw new RuntimeException("no meals found to delete!"); }
+        );
+    }
 }
