@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+
+left to right direction
+
+actor User
+actor Admin
+
+rectangle "FitMeal API" {
+    User --> (Fetch Random Meal)
+    User --> (Fetch Random Workout)
+    User --> (Log Meal)
+    User --> (Log Workout)
+    User --> (View Saved Meals)
+    User --> (View Saved Workouts)
+
+    Admin <-- (Add Meal)
+    Admin <-- (Delete Meal)
+    Admin <-- (Add Workout)
+    Admin <-- (Delete Workout)
+}
+@enduml

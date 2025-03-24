@@ -1,5 +1,6 @@
 package app.services;
 
+import app.dtos.WorkoutDTO;
 import app.entities.Workout;
 import app.daos.WorkoutDAO;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,21 +11,25 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
 public class WorkoutService {
     private static final String API_URL = "https://wger.de/api/v2/exerciseinfo/?language=2";
-
     private final WorkoutDAO workoutDAO;
 
     public WorkoutService(WorkoutDAO workoutDAO) {
         this.workoutDAO = workoutDAO;
     }
 
-    // Fetch and save a random workout
+    // ✅ Fetch all workouts
+    public List<Workout> getAllWorkouts() {
+        return workoutDAO.findAll();
+    }
+
+    // ✅ Fetch and save a random workout
     public Workout fetchAndSaveRandomWorkout() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -36,13 +41,11 @@ public class WorkoutService {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response.body());
 
-            // Ensure API response contains workouts
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
                 System.out.println("No workout data found.");
                 return null;
             }
 
-            // Pick a random workout
             Random random = new Random();
             int randomIndex = random.nextInt(rootNode.get("results").size());
             JsonNode workoutNode = rootNode.get("results").get(randomIndex);
@@ -51,7 +54,6 @@ public class WorkoutService {
                     ? workoutNode.get("category").get("name").asText()
                     : "Unknown Category";
 
-            // Extract name & description from `translations`
             String name = "Unknown Workout";
             String description = "No description available.";
 
@@ -65,7 +67,6 @@ public class WorkoutService {
                 }
             }
 
-            // Save to database
             Workout workout = new Workout(
                     workoutNode.get("id").asText(),
                     name,
@@ -87,7 +88,7 @@ public class WorkoutService {
         return null;
     }
 
-    // Fetch & save multiple workouts
+    // ✅ Fetch & save multiple workouts
     public void fetchAndSaveMultipleWorkouts() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -99,19 +100,17 @@ public class WorkoutService {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(response.body());
 
-            // Ensure API response contains workouts
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
                 System.out.println("No workout data found.");
                 return;
             }
 
-            List<Workout> workouts = new ArrayList<>();
-            for (JsonNode workoutNode : rootNode.get("results")) {
+            List<Workout> workouts = rootNode.get("results").findValuesAsText("id").stream().map(id -> {
+                JsonNode workoutNode = rootNode.get("results").get(0);
                 String category = workoutNode.has("category") && workoutNode.get("category").has("name")
                         ? workoutNode.get("category").get("name").asText()
                         : "Unknown Category";
 
-                // Extract name & description from `translations`
                 String name = "Unknown Workout";
                 String description = "No description available.";
 
@@ -125,22 +124,25 @@ public class WorkoutService {
                     }
                 }
 
-                // Create and add workout
-                workouts.add(new Workout(
-                        workoutNode.get("id").asText(),
-                        name,
-                        category,
-                        description
-                ));
-            }
+                return new Workout(id, name, category, description);
+            }).toList();
 
-            // Save all workouts to the database
             workoutDAO.saveAll(workouts);
             System.out.println("\n===== Multiple Workouts Saved to Database =====");
-            System.out.println(workouts.size() + "workouts saved!");
+            System.out.println(workouts.size() + " workouts saved!");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    // ✅ Update workout
+    public Workout updateWorkout(Long id, WorkoutDTO workoutDTO) {
+        return workoutDAO.findById(id).map(workout -> {
+            workout.setName(workoutDTO.getName());
+            workout.setCategory(workoutDTO.getCategory());
+            workout.setDescription(workoutDTO.getDescription());
+            return workoutDAO.save(workout);
+        }).orElseThrow(() -> new RuntimeException("Workout not found with id: " + id));
     }
 }

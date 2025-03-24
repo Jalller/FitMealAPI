@@ -1,5 +1,6 @@
 package app.services;
 
+import app.dtos.MealDTO;
 import app.entities.Meal;
 import app.daos.MealDAO;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -91,4 +92,15 @@ public class MealService {
     public List<Meal> getAllMeals() {
         return mealDAO.findAll();
     }
+    public Meal updateMeal(Long id, MealDTO mealDTO) {
+        return mealDAO.findById(id).map(meal -> {
+            meal.setName(mealDTO.getStrMeal());
+            meal.setCategory(mealDTO.getStrCategory());
+            meal.setArea(mealDTO.getStrArea());
+            meal.setInstructions(mealDTO.getStrInstructions());
+            meal.setImageUrl(mealDTO.getStrMealThumb());
+            return mealDAO.save(meal);
+        }).orElseThrow(() -> new RuntimeException("Meal not found with id: " + id));
+    }
+
 }

@@ -1,5 +1,7 @@
 package app.controllers;
 
+import app.dtos.WorkoutDTO;
+import app.entities.Workout;
 import app.services.WorkoutService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,4 +29,10 @@ public class WorkoutController {
         workoutService.fetchAndSaveMultipleWorkouts();
         return ResponseEntity.ok("Fetched and saved multiple workouts.");
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Workout> updateWorkout(@PathVariable Long id, @RequestBody WorkoutDTO workoutDTO) {
+        Workout updatedWorkout = workoutService.updateWorkout(id, workoutDTO);
+        return ResponseEntity.ok(updatedWorkout);
+    }
+
 }

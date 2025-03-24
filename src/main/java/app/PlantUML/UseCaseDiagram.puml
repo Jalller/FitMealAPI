@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+
+left to right direction
+
+actor System
+
+rectangle "FitMeal API" {
+    System --> (Fetch Random Meal)
+    System --> (Fetch Random Workout)
+    System --> (Retrieve All Meals)
+    System --> (Retrieve All Workouts)
+    System --> (Add Meal)
+    System --> (Add Workout)
+    System --> (Delete Meal)
+    System --> (Delete Workout)
+}
+@enduml

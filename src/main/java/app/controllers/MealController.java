@@ -1,5 +1,6 @@
 package app.controllers;
 
+import app.dtos.MealDTO;
 import app.entities.Meal;
 import app.services.MealService;
 import org.springframework.http.ResponseEntity;
@@ -40,4 +41,10 @@ public class MealController {
         mealService.fetchAndSaveMultipleMeals();
         return ResponseEntity.ok("fetched and saved multiple meals");
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Meal> updateMeal(@PathVariable Long id, @RequestBody MealDTO mealDTO) {
+        Meal updatedMeal = mealService.updateMeal(id, mealDTO);
+        return ResponseEntity.ok(updatedMeal);
+    }
+
 }

@@ -1,6 +1,13 @@
 @startuml
 'https://plantuml.com/class-diagram
 
+
+class User {
+    + userId : String
+    + username : String
+    + password : String
+}
+
 class Meal {
     + mealId : String
     + name : String
@@ -10,10 +17,6 @@ class Meal {
     + imageUrl : String
 }
 
-class Ingredient {
-    + ingredientName : String
-}
-
 class Workout {
     + workoutId : String
     + name : String
@@ -21,35 +24,45 @@ class Workout {
     + description : String
 }
 
+class Ingredient {
+    + ingredientName : String
+}
+
+class MealLog {
+    + logId : String
+    + date : Date
+}
+
+class WorkoutLog {
+    + logId : String
+    + date : Date
+}
+
 class MealService {
     + fetchRandomMeal() : Meal
-    + fetchMealsByCategory(category: String) : List<Meal>
     + saveMeal(Meal) : void
 }
 
 class WorkoutService {
     + fetchRandomWorkout() : Workout
-    + fetchMultipleWorkouts() : List<Workout>
     + saveWorkout(Workout) : void
 }
 
 class MealController {
-    + fetchRandomMeal() : Meal
-    + getAllMeals() : List<Meal>
     + getMealById(id: String) : Meal
     + addMeal(Meal) : void
-    + deleteMeal(id: String) : void
 }
 
 class WorkoutController {
-    + fetchRandomWorkout() : Workout
-    + getAllWorkouts() : List<Workout>
     + getWorkoutById(id: String) : Workout
     + addWorkout(Workout) : void
-    + deleteWorkout(id: String) : void
 }
 
+User "1" -- "0..*" MealLog : logs
+User "1" -- "0..*" WorkoutLog : logs
 Meal "1" -- "0..*" Ingredient : contains
+MealLog "1" -- "1" Meal : refers to
+WorkoutLog "1" -- "1" Workout : refers to
 
 MealController --> MealService
 WorkoutController --> WorkoutService
