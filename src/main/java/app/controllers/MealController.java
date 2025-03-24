@@ -18,13 +18,13 @@ public class MealController {
         this.mealService = mealService;
     }
 
-    // Get all meals from the database
+    // get all meals from the database
     @GetMapping
     public List<Meal> getAllMeals() {
         return mealService.getAllMeals();
     }
 
-    // Fetch and save one random meal
+    // fetch and save one random meal
     @PostMapping("/fetch-random")
     public ResponseEntity<Meal> fetchAndSaveRandomMeal() {
         Meal meal = mealService.fetchAndSaveRandomMeal();
@@ -35,7 +35,7 @@ public class MealController {
         }
     }
 
-    // Fetch and save multiple meals from different categories
+    // fetch and save multiple meals from different categories
     @PostMapping("/fetch-multiple")
     public ResponseEntity<String> fetchAndSaveMultipleMeals() {
         mealService.fetchAndSaveMultipleMeals();
@@ -46,5 +46,40 @@ public class MealController {
         Meal updatedMeal = mealService.updateMeal(id, mealDTO);
         return ResponseEntity.ok(updatedMeal);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteMeal(@PathVariable Long id) {
+        mealService.deleteMeal(id);
+        return ResponseEntity.ok("Meal deleted successfully!");
+    }
+
+    // update the first available meal
+    @PutMapping("/update-first")
+    public ResponseEntity<String> updateFirstAvailableMeal() {
+        mealService.updateFirstAvailableMeal();
+        return ResponseEntity.ok("First available meal updated successfully!");
+    }
+
+    // update meal by ID
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> updateMealById(@PathVariable Long id, @RequestBody MealDTO mealDTO) {
+        mealService.updateMealById(id, mealDTO);
+        return ResponseEntity.ok("Meal updated successfully by ID!");
+    }
+
+    // delete the first available meal
+    @DeleteMapping("/delete-first")
+    public ResponseEntity<String> deleteFirstAvailableMeal() {
+        mealService.deleteFirstAvailableMeal();
+        return ResponseEntity.ok("First available meal deleted successfully!");
+    }
+
+    // delete meal by ID
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteMealById(@PathVariable Long id) {
+        mealService.deleteMealById(id);
+        return ResponseEntity.ok("Meal deleted successfully by ID!");
+    }
+
+
 
 }

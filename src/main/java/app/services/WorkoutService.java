@@ -24,12 +24,12 @@ public class WorkoutService {
         this.workoutDAO = workoutDAO;
     }
 
-    // ✅ Fetch all workouts
+    // Fetch all workouts
     public List<Workout> getAllWorkouts() {
         return workoutDAO.findAll();
     }
 
-    // ✅ Fetch and save a random workout
+    // Fetch and save a random workout
     public Workout fetchAndSaveRandomWorkout() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -88,7 +88,7 @@ public class WorkoutService {
         return null;
     }
 
-    // ✅ Fetch & save multiple workouts
+    // Fetch & save multiple workouts
     public void fetchAndSaveMultipleWorkouts() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -136,7 +136,7 @@ public class WorkoutService {
         }
     }
 
-    // ✅ Update workout
+    // update workout find by ID update fields save updated to db
     public Workout updateWorkout(Long id, WorkoutDTO workoutDTO) {
         return workoutDAO.findById(id).map(workout -> {
             workout.setName(workoutDTO.getName());
@@ -145,4 +145,53 @@ public class WorkoutService {
             return workoutDAO.save(workout);
         }).orElseThrow(() -> new RuntimeException("Workout not found with id: " + id));
     }
+    //delete workout by ID
+    public void deleteWorkout(Long id) {
+        if (workoutDAO.existsById(id)) {
+            workoutDAO.deleteById(id);
+            System.out.println("Workout deleted: ID " + id);
+        } else {
+            throw new RuntimeException("Workout not found with ID: " + id);
+        }
+    }
+    // update the first available workout
+    public void updateFirstAvailableWorkout() {
+        workoutDAO.findAll().stream().findFirst().ifPresent(workout -> {
+            workout.setName("Updated Workout Name");
+            workout.setCategory("Updated Category");
+            workout.setDescription("Updated workout description...");
+            workoutDAO.save(workout);
+            System.out.println("Workout updated: " + workout.getName());
+        });
+    }
+
+    // update workout by ID
+    public void updateWorkoutById(Long id, WorkoutDTO workoutDTO) {
+        workoutDAO.findById(id).ifPresent(workout -> {
+            workout.setName(workoutDTO.getName());
+            workout.setCategory(workoutDTO.getCategory());
+            workout.setDescription(workoutDTO.getDescription());
+            workoutDAO.save(workout);
+            System.out.println("Workout updated by ID: " + workout.getName());
+        });
+    }
+
+    // delete the first available workout
+    public void deleteFirstAvailableWorkout() {
+        workoutDAO.findAll().stream().findFirst().ifPresent(workout -> {
+            workoutDAO.deleteById(workout.getId());
+            System.out.println("Workout deleted: " + workout.getName());
+        });
+    }
+
+    // delete workout by ID
+    public void deleteWorkoutById(Long id) {
+        workoutDAO.findById(id).ifPresent(workout -> {
+            workoutDAO.deleteById(id);
+            System.out.println("Workout deleted by ID: " + workout.getName());
+        });
+    }
+
+
+
 }

@@ -92,6 +92,7 @@ public class MealService {
     public List<Meal> getAllMeals() {
         return mealDAO.findAll();
     }
+    // Update meal find by ID update fields save updated to db
     public Meal updateMeal(Long id, MealDTO mealDTO) {
         return mealDAO.findById(id).map(meal -> {
             meal.setName(mealDTO.getStrMeal());
@@ -101,6 +102,59 @@ public class MealService {
             meal.setImageUrl(mealDTO.getStrMealThumb());
             return mealDAO.save(meal);
         }).orElseThrow(() -> new RuntimeException("Meal not found with id: " + id));
+
+
     }
+    //delete meal by ID
+    public void deleteMeal(Long id) {
+        if (mealDAO.existsById(id)) {
+            mealDAO.deleteById(id);
+            System.out.println("Meal deleted: ID " + id);
+        } else {
+            throw new RuntimeException("Meal not found with ID: " + id);
+        }
+    }
+    // update the first available meal
+    public void updateFirstAvailableMeal() {
+        mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
+            meal.setName("Updated Meal Name");
+            meal.setCategory("Updated Category");
+            meal.setArea("Updated Area");
+            meal.setInstructions("Updated Instructions...");
+            meal.setImageUrl("https://example.com/updated-image.jpg");
+            mealDAO.save(meal);
+            System.out.println("Meal updated: " + meal.getName());
+        });
+    }
+
+    // update meal by ID
+    public void updateMealById(Long id, MealDTO mealDTO) {
+        mealDAO.findById(id).ifPresent(meal -> {
+            meal.setName(mealDTO.getStrMeal());
+            meal.setCategory(mealDTO.getStrCategory());
+            meal.setArea(mealDTO.getStrArea());
+            meal.setInstructions(mealDTO.getStrInstructions());
+            meal.setImageUrl(mealDTO.getStrMealThumb());
+            mealDAO.save(meal);
+            System.out.println("Meal updated by ID: " + meal.getName());
+        });
+    }
+
+    // delete the first available meal
+    public void deleteFirstAvailableMeal() {
+        mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
+            mealDAO.deleteById(meal.getId());
+            System.out.println("Meal deleted: " + meal.getName());
+        });
+    }
+
+    // delete meal by ID
+    public void deleteMealById(Long id) {
+        mealDAO.findById(id).ifPresent(meal -> {
+            mealDAO.deleteById(id);
+            System.out.println("Meal deleted by ID: " + meal.getName());
+        });
+    }
+
 
 }
