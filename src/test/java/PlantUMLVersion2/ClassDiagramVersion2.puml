@@ -1,0 +1,85 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+' Define Meal class
+class Meal {
+  - Long id
+  - String name
+  - String category
+  - String area
+  - String instructions
+  - String image
+  + Meal(Long id, String name, String category, String area, String instructions, String image)
+  + getId(): Long
+  + getName(): String
+  + getCategory(): String
+  + getArea(): String
+  + getInstructions(): String
+  + getImage(): String
+}
+
+' Define Workout class
+class Workout {
+  - Long id
+  - String name
+  - String category
+  - String description
+  + Workout(Long id, String name, String category, String description)
+  + getId(): Long
+  + getName(): String
+  + getCategory(): String
+  + getDescription(): String
+}
+
+' Define MealService class
+class MealService {
+  - MealDAO mealRepository
+  + fetchAndSaveRandomMeal(): Meal
+  + updateMealById(Long id, MealDTO mealDTO): boolean
+  + deleteMealById(Long id): boolean
+  + getAllMeals(): List<Meal>
+}
+
+' Define WorkoutService class
+class WorkoutService {
+  - WorkoutDAO workoutRepository
+  + fetchAndSaveRandomWorkout(): Workout
+  + updateWorkoutById(Long id, WorkoutDTO workoutDTO): boolean
+  + deleteWorkoutById(Long id): boolean
+  + getAllWorkouts(): List<Workout>
+}
+
+' Define MealController class
+class MealController {
+  - MealService mealService
+  + createMeal(MealDTO mealDTO): Meal
+  + getMealById(Long id): Optional<Meal>
+  + updateMeal(Long id, MealDTO mealDTO): ResponseEntity
+  + deleteMeal(Long id): ResponseEntity
+}
+
+' Define WorkoutController class
+class WorkoutController {
+  - WorkoutService workoutService
+  + createWorkout(WorkoutDTO workoutDTO): Workout
+  + getWorkoutById(Long id): Optional<Workout>
+  + updateWorkout(Long id, WorkoutDTO workoutDTO): ResponseEntity
+  + deleteWorkout(Long id): ResponseEntity
+}
+
+' Relationships between classes
+MealService --> MealDAO : "Uses"
+WorkoutService --> WorkoutDAO : "Uses"
+MealController --> MealService : "Uses"
+WorkoutController --> WorkoutService : "Uses"
+
+@enduml
+
+//The Class Diagram shows the relationships between the entities like Meal, Workout, MealService, WorkoutService, MealController, and WorkoutController.
+  The Meal and Workout classes represent entities in your system.
+
+  The MealService and WorkoutService handle the business logic (CRUD operations).
+
+  The MealController and WorkoutController handle the HTTP requests and responses, interacting with the respective services.
+
+  The arrows indicate dependencies: controllers depend on services, and services depend on DAOs (repositories).

@@ -1,0 +1,64 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+
+actor User
+participant MealController
+participant MealService
+participant MealDAO
+
+' User requests a meal by ID
+User -> MealController : getMealById(1)
+
+' Controller calls the service to fetch the meal
+MealController -> MealService : getMealById(1)
+
+' Service checks the database (MealDAO) for the meal
+MealService -> MealDAO : findById(1)
+
+' DAO returns the meal data
+MealDAO -> MealService : Optional<Meal> (Meal)
+
+' Service returns the meal data to the controller
+MealService -> MealController : Optional<Meal> (Meal)
+
+' Controller returns the response to the user
+MealController -> User : Response (Meal)
+
+@enduml
+
+//@startuml
+
+  actor User
+  participant MealController
+  participant MealService
+  participant MealDAO
+
+  ' User requests a meal by ID
+  User -> MealController : getMealById(1)
+
+  ' Controller calls the service to fetch the meal
+  MealController -> MealService : getMealById(1)
+
+  ' Service checks the database (MealDAO) for the meal
+  MealService -> MealDAO : findById(1)
+
+  ' DAO returns the meal data
+  MealDAO -> MealService : Optional<Meal> (Meal)
+
+  ' Service returns the meal data to the controller
+  MealService -> MealController : Optional<Meal> (Meal)
+
+  ' Controller returns the response to the user
+  MealController -> User : Response (Meal)
+
+  @enduml
+
+//A Sequence Diagram illustrates the interaction between the user, controller, service, and database during a typical operation. Here's an example of fetching a meal by ID.
+The user initiates the request by calling getMealById.
+
+The MealController invokes MealService to handle the business logic.
+
+MealService interacts with MealDAO to fetch the meal from the database.
+
+The meal data is returned back through the layers to the user.

@@ -42,4 +42,12 @@ public class Meal {
         this.imageUrl = imageUrl;
     }
 
+    public Meal(String name, String category, String area, String instructions, String imageUrl, List<Ingredient> ingredients) {
+        this.name = name;
+        this.category = category;
+        this.area = area;
+        this.instructions = instructions;
+        this.imageUrl = imageUrl;
+        this.ingredients = ingredients;
+    }
 }

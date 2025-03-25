@@ -130,7 +130,7 @@ public class MealService {
     }
 
     // update meal by id
-    public void updateMealById(Long id, MealDTO mealDTO) {
+    public boolean updateMealById(Long id, MealDTO mealDTO) {
         mealDAO.findById(id).ifPresent(meal -> {
             meal.setName(mealDTO.getStrMeal());
             meal.setCategory(mealDTO.getStrCategory());
@@ -140,6 +140,7 @@ public class MealService {
             mealDAO.save(meal);
             System.out.println("meal updated by id: " + meal.getName());
         });
+        return false;
     }
 
     // delete the first available meal
@@ -151,11 +152,12 @@ public class MealService {
     }
 
     // delete meal by id
-    public void deleteMealById(Long id) {
+    public boolean deleteMealById(Long id) {
         mealDAO.findById(id).ifPresent(meal -> {
             mealDAO.deleteById(id);
             System.out.println("meal deleted by id: " + meal.getName());
         });
+        return false;
     }
 
     // get the last available meal

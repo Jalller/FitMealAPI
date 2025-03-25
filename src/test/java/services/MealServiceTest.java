@@ -1,8 +1,8 @@
 //package services;
 //
-//import app.daos.MealDAO;
 //import app.dtos.MealDTO;
 //import app.entities.Meal;
+//import app.daos.MealDAO;
 //import app.services.MealService;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
@@ -21,44 +21,64 @@
 //class MealServiceTest {
 //
 //    @Mock
-//    private MealDAO mealDAO;
+//    private MealDAO mealRepository;
 //
 //    @InjectMocks
 //    private MealService mealService;
 //
-//    private Meal sampleMeal;
+//    private Meal meal;
+//    private MealDTO mealDTO;
 //
 //    @BeforeEach
 //    void setUp() {
-//        sampleMeal = new Meal("1", "Test Meal", "Category", "Area", "Instructions", "image.jpg");
+//        meal = new Meal(1L, "Test Meal", "Category", "Area", "Instructions", "image.jpg", null);
+//        mealDTO = new MealDTO("1", "Updated Meal", "Updated Category", "Updated Area", "Updated Instructions", "updated-image.jpg", null);
 //    }
 //
 //    @Test
-//    void shouldGetAllMeals() {
-//        when(mealDAO.findAll()).thenReturn(List.of(sampleMeal));
+//    void testFetchAndSaveRandomMeal() {
+//        when(mealRepository.save(any(Meal.class))).thenReturn(meal);
+//        Meal savedMeal = mealService.fetchAndSaveRandomMeal();
+//        assertNotNull(savedMeal);
+//        verify(mealRepository, times(1)).save(any(Meal.class));
+//    }
+//
+//    @Test
+//    void testUpdateMealById() {
+//        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
+//        when(mealRepository.save(any(Meal.class))).thenReturn(meal);
+//
+//        boolean updated = mealService.updateMealById(1L, mealDTO);
+//        assertTrue(updated);
+//        verify(mealRepository, times(1)).save(any(Meal.class));
+//    }
+//
+//    @Test
+//    void testDeleteMealById() {
+//        when(mealRepository.existsById(1L)).thenReturn(true);
+//        doNothing().when(mealRepository).deleteById(1L);
+//
+//        boolean deleted = mealService.deleteMealById(1L);
+//        assertTrue(deleted);
+//        verify(mealRepository, times(1)).deleteById(1L);
+//    }
+//
+//    @Test
+//    void testGetAllMeals() {
+//        when(mealRepository.findAll()).thenReturn(List.of(meal));
 //        List<Meal> meals = mealService.getAllMeals();
 //        assertFalse(meals.isEmpty());
 //        assertEquals(1, meals.size());
-//        verify(mealDAO, times(1)).findAll();
 //    }
 //
-//    @Test
-//    void shouldUpdateMeal() {
-//        MealDTO updatedMealDTO = new MealDTO("1", "Updated Meal", "Updated Category", "Updated Area", "Updated Instructions", "updated.jpg", null);
-//        when(mealDAO.findById(1L)).thenReturn(Optional.of(sampleMeal));
-//        when(mealDAO.save(any(Meal.class))).thenReturn(sampleMeal);
+////    @Test
+//    void testGetMealById() {
+//        when(mealRepository.findById(1L)).thenReturn(Optional.of(meal));
 //
-//        Meal updatedMeal = mealService.updateMeal(1L, updatedMealDTO);
-//        assertEquals("Updated Meal", updatedMeal.getName());
-//        verify(mealDAO, times(1)).save(any(Meal.class));
-//    }
+//        Optional<Meal> foundMeal = mealService.getMealById(1L);
 //
-//    @Test
-//    void shouldDeleteMeal() {
-//        when(mealDAO.existsById(1L)).thenReturn(true);
-//        doNothing().when(mealDAO).deleteById(1L);
-//
-//        mealService.deleteMeal(1L);
-//        verify(mealDAO, times(1)).deleteById(1L);
+//        assertTrue(foundMeal.isPresent());
+//        assertEquals("Test Meal", foundMeal.get().getName());
+//        verify(mealRepository, times(1)).findById(1L);
 //    }
 //}

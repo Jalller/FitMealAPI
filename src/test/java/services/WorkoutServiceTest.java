@@ -1,8 +1,8 @@
 //package services;
 //
-//import app.daos.WorkoutDAO;
 //import app.dtos.WorkoutDTO;
 //import app.entities.Workout;
+//import app.daos.WorkoutDAO;
 //import app.services.WorkoutService;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
@@ -21,44 +21,53 @@
 //class WorkoutServiceTest {
 //
 //    @Mock
-//    private WorkoutDAO workoutDAO;
+//    private WorkoutDAO workoutRepository;
 //
 //    @InjectMocks
 //    private WorkoutService workoutService;
 //
-//    private Workout sampleWorkout;
+//    private Workout workout;
+//    private WorkoutDTO workoutDTO;
 //
 //    @BeforeEach
 //    void setUp() {
-//        sampleWorkout = new Workout("1", "Test Workout", "Category", "Description");
+//        workout = new Workout(1L, "Test Workout", "Category", "Description");
+//        workoutDTO = new WorkoutDTO("1", "Updated Workout", "Updated Category", "Updated Description");
 //    }
 //
 //    @Test
-//    void shouldGetAllWorkouts() {
-//        when(workoutDAO.findAll()).thenReturn(List.of(sampleWorkout));
+//    void testFetchAndSaveRandomWorkout() {
+//        when(workoutRepository.save(any(Workout.class))).thenReturn(workout);
+//        Workout savedWorkout = workoutService.fetchAndSaveRandomWorkout();
+//        assertNotNull(savedWorkout);
+//        verify(workoutRepository, times(1)).save(any(Workout.class));
+//    }
+//
+//    @Test
+//    void testUpdateWorkoutById() {
+//        when(workoutRepository.findById(1L)).thenReturn(Optional.of(workout));
+//        when(workoutRepository.save(any(Workout.class))).thenReturn(workout);
+//
+//        boolean updated = workoutService.updateWorkoutById(1L, workoutDTO);
+//        assertTrue(updated);
+//        verify(workoutRepository, times(1)).save(any(Workout.class));
+//    }
+//
+//    @Test
+//    void testDeleteWorkoutById() {
+//        when(workoutRepository.existsById(1L)).thenReturn(true);
+//        doNothing().when(workoutRepository).deleteById(1L);
+//
+//        boolean deleted = workoutService.deleteWorkoutById(1L);
+//        assertTrue(deleted);
+//        verify(workoutRepository, times(1)).deleteById(1L);
+//    }
+//
+//    @Test
+//    void testGetAllWorkouts() {
+//        when(workoutRepository.findAll()).thenReturn(List.of(workout));
 //        List<Workout> workouts = workoutService.getAllWorkouts();
 //        assertFalse(workouts.isEmpty());
 //        assertEquals(1, workouts.size());
-//        verify(workoutDAO, times(1)).findAll();
-//    }
-//
-//    @Test
-//    void shouldUpdateWorkout() {
-//        WorkoutDTO updatedWorkoutDTO = new WorkoutDTO("1", "Updated Workout", "Updated Category", "Updated Description");
-//        when(workoutDAO.findById(1L)).thenReturn(Optional.of(sampleWorkout));
-//        when(workoutDAO.save(any(Workout.class))).thenReturn(sampleWorkout);
-//
-//        Workout updatedWorkout = workoutService.updateWorkout(1L, updatedWorkoutDTO);
-//        assertEquals("Updated Workout", updatedWorkout.getName());
-//        verify(workoutDAO, times(1)).save(any(Workout.class));
-//    }
-//
-//    @Test
-//    void shouldDeleteWorkout() {
-//        when(workoutDAO.existsById(1L)).thenReturn(true);
-//        doNothing().when(workoutDAO).deleteById(1L);
-//
-//        workoutService.deleteWorkout(1L);
-//        verify(workoutDAO, times(1)).deleteById(1L);
 //    }
 //}

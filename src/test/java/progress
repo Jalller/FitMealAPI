@@ -1,0 +1,275 @@
+ Progress Summary: How Far You've Come
+You've done quite a lot already! Here's what you've completed so far:
+
+CRUD operations (Create, Read, Update, Delete) ✅
+
+Creating meals and workouts (fetching and saving)
+
+Updating meals and workouts by ID and dynamically
+
+Deleting meals and workouts by ID and dynamically
+
+Database Integration (JPA) ✅
+
+Storing and retrieving meals and workouts
+
+DTOs (Data Transfer Objects) ✅
+
+Using MealDTO and WorkoutDTO for structured data transfer
+
+Fetching external API data ✅
+
+You are pulling meals and workouts from an external source and storing them
+
+CommandLineRunner for data testing ✅
+
+The run() method in Main.java is successfully fetching, updating, and deleting meals and workouts
+
+Spring Boot Application Setup ✅
+
+Your project structure looks good
+
+JPA Entity Scanning ✅
+
+The @EntityScan(basePackages = "app.entities") is correctly scanning your entity classes
+
+📝 To-Do List
+Here's what you still need to do:
+
+Task	Status
+JWT Security Implementation (Roles like USER, ADMIN)	❌ Not done
+Error Handling (Proper status codes & JSON messages)	⚠️ Partially done
+HTTP Test File (For manual endpoint testing)	❌ Not done
+Testing (DAO, Service, Endpoints)	⚠️ Partially done, needs fixing
+Deployment (Digital Ocean, Docker, Caddy, HTTPS)	❌ Not done
+API Documentation (Endpoints, API Hub)	❌ Not done
+📌 Where Your Code Fulfills Assignment Requirements
+1️⃣ CRUD Operations
+📌 What it means:
+CRUD stands for Create, Read, Update, and Delete. It ensures that an API can fully manage its data.
+
+✅ Where you're doing it in your code:
+CRUD Action	Code Example (from your Main.java)
+Create (POST)	mealService.fetchAndSaveRandomMeal();
+workoutService.fetchAndSaveRandomWorkout();
+Read (GET)	mealService.getAllMeals();
+workoutService.getAllWorkouts(); (commented out in Main.java)
+Update (PUT/PATCH)	mealService.updateMealById(10L, new MealDTO(...));
+workoutService.updateWorkoutById(15L, new WorkoutDTO(...));
+Delete (DELETE)	mealService.deleteMealById(20L);
+workoutService.deleteWorkoutById(25L);
+2️⃣ JWT Security
+📌 What it means:
+JWT (JSON Web Token) is used to secure APIs by allowing authenticated access to certain endpoints.
+
+🚧 Status: Not yet implemented. You need:
+A User entity with roles (USER, ADMIN)
+
+A JWT filter to authenticate requests
+
+Secure endpoints with @PreAuthorize("hasRole('ADMIN')") (for admin actions)
+
+3️⃣ Error Handling
+📌 What it means:
+When something goes wrong, the API should return:
+
+A proper HTTP status code (e.g., 400 Bad Request, 404 Not Found, 500 Internal Server Error)
+
+A JSON error message for the frontend to understand
+
+🚧 Status: Partially done
+You need a @ControllerAdvice class to globally handle errors.
+
+4️⃣ HTTP Test File
+📌 What it means:
+A .http file lets you manually test API endpoints without needing Postman.
+
+🚧 Status: Not done yet.
+You'll need to write test requests for all endpoints.
+
+5️⃣ Testing (DAO, Service, API Security, Error Handling)
+📌 What it means:
+You need JUnit, Hamcrest, Rest Assured, and test containers to:
+
+Test database queries (DAO Tests)
+
+Test service logic (Service Tests)
+
+Test endpoints (API Tests)
+
+Test security (JWT access)
+
+🚧 Status: Partially done, but needs fixing.
+I'll now fix your test classes and send them over.
+
+Here's a to-do list for the next few days along with a plan to help you stay organized and meet the deadline by Sunday midnight.
+
+To-Do List
+Done
+Set up meal and workout classes.
+
+Created DTOs (Data Transfer Objects) for Meal and Workout.
+
+Created Services and Controllers for Meal and Workout.
+
+Implemented CRUD operations (Create, Read, Update, Delete) in Services.
+
+Created Unit Tests for MealService and WorkoutService.
+
+Fixed methods in MealService and MealController for getMealById and getWorkoutById.
+
+To Do
+Fix & Comment Code:
+
+Go through each service, controller, and entity.
+
+Add meaningful comments where necessary.
+
+Ensure consistency in naming conventions and code structure.
+
+Add Descriptions:
+
+Add clear descriptions and Javadoc to the methods.
+
+Describe functionality where necessary to ensure readability.
+
+Refactor & Optimize:
+
+Look for any repetitive code or improvements in logic.
+
+Ensure the code is clean, optimized, and easy to understand.
+
+Ensure Tests are Complete:
+
+Write tests for edge cases (e.g., when a meal/workout doesn't exist, when deleting fails, etc.).
+
+Ensure tests are fully passing.
+
+Prepare for the Submission:
+
+Verify that all tasks are completed.
+
+Check if everything is working as expected.
+
+Review all code for clarity and organization.
+
+Create Documentation:
+
+Write a brief summary of what the code does and its functionality.
+
+Make sure it's clear and easy for others (including teachers) to understand.
+
+Day-by-Day Plan (Tuesday to Sunday)
+Tuesday (Today):
+Complete Remaining Tests:
+
+Focus on ensuring all the test classes (MealServiceTest, WorkoutServiceTest, MealControllerTest) are complete and functional.
+
+Add any missing edge cases in tests (e.g., handling null inputs, invalid IDs, etc.).
+
+Code Cleanup:
+
+Ensure all the code is well-commented, especially complex methods.
+
+Add Javadoc to all important methods to explain their functionality.
+
+Test All Code:
+
+Run all tests to confirm that everything is passing and working correctly.
+
+Wednesday:
+Work on Descriptions:
+
+Go through the entire codebase (Services, Controllers, etc.).
+
+Add clear and concise descriptions to methods and classes.
+
+This will improve readability for you and your teachers.
+
+Refactor Code:
+
+Review the code for any improvements, look for places where the code could be optimized or simplified.
+
+Create Any Missing Tests:
+
+If there are missing or weak test cases, add them. Focus on edge cases.
+
+Run all tests after making changes to verify everything works.
+
+Thursday:
+Document the Code:
+
+Finish adding all the comments and descriptions for clarity.
+
+Make sure to write meaningful summaries for any complex code and methods.
+
+Final Code Review:
+
+Go through all your classes and check for consistency and proper formatting.
+
+Ensure code style and naming conventions are consistent throughout the project.
+
+Run Tests Again:
+
+Run tests to make sure no functionality was broken during refactoring.
+
+Friday (Mid-Day Deadline):
+Prepare for Submission:
+
+Make sure everything works smoothly and the code is well-commented.
+
+Review your code for readability, clarity, and correctness.
+
+Write Final Documentation:
+
+Include a summary of the project: what each class does and any relevant details.
+
+Ensure that the documentation is clear and easily understandable.
+
+Clean Up:
+
+Remove any unnecessary or commented-out code.
+
+Ensure there are no leftover debug statements or unfinished parts of the code.
+
+Saturday:
+Final Review and Testing:
+
+Do a final review of your code and the tests.
+
+Check that all functionality is in place and that there are no issues.
+
+If possible, ask a peer or colleague to review the project and provide feedback.
+
+Sunday:
+Last-Minute Improvements:
+
+Make any final tweaks based on feedback or your review.
+
+Final Test Run:
+
+Make sure all the tests pass one more time.
+
+Prepare the Submission:
+
+Double-check everything before submitting.
+
+Ensure that all files are in the correct format and location.
+
+Submit by Midnight:
+
+Ensure everything is submitted correctly by the deadline.
+
+Key Milestones for Your Plan:
+By Friday (Mid-Day): Code should be well-commented, descriptions added, and all tests completed. This will give you a lot of breathing room before Sunday.
+
+By Sunday (Midnight): Final tweaks, testing, and documentation.
+
+Tips to Stay on Track:
+Set Timers: Work in focused intervals (e.g., 45 minutes of work, 15 minutes of break).
+
+Keep Distractions Minimal: Avoid distractions and stay focused.
+
+Take Short Breaks: Take short breaks to refresh your mind and prevent burnout.
+
+Let me know if you need more specific help with anything else! This plan should guide you through the process and help you finish on time with a good quality project.

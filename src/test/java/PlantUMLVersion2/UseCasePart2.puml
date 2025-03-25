@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+actor User
+actor Admin
+
+User --> (View Meal)
+User --> (View Workout)
+User --> (Create Meal)
+User --> (Create Workout)
+
+Admin --> (Update Meal)
+Admin --> (Update Workout)
+Admin --> (Delete Meal)
+Admin --> (Delete Workout)
+
+(View Meal) --> (MealController)
+(View Workout) --> (WorkoutController)
+(Create Meal) --> (MealController)
+(Create Workout) --> (WorkoutController)
+(Update Meal) --> (MealController)
+(Update Workout) --> (WorkoutController)
+(Delete Meal) --> (MealController)
+(Delete Workout) --> (WorkoutController)
+
+@enduml
+
+//A Use Case Diagram visualizes the system's functionalities and interactions with the users or other components.
+//The User can view or create meals and workouts.
+
+  The Admin has additional permissions to update and delete meals and workouts.
+
+  The arrows indicate which controller (MealController or WorkoutController) handles each action.
+  Illustrates the user and admin roles and the different functionalities they can access (view, create, update, delete).

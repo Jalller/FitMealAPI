@@ -168,7 +168,7 @@ public class WorkoutService {
     }
 
     // update workout by id
-    public void updateWorkoutById(Long id, WorkoutDTO workoutDTO) {
+    public boolean updateWorkoutById(Long id, WorkoutDTO workoutDTO) {
         workoutDAO.findById(id).ifPresent(workout -> {
             workout.setName(workoutDTO.getName());
             workout.setCategory(workoutDTO.getCategory());
@@ -176,6 +176,7 @@ public class WorkoutService {
             workoutDAO.save(workout);
             System.out.println("workout updated by id: " + workout.getName());
         });
+        return false;
     }
 
     // delete first available workout
@@ -187,11 +188,12 @@ public class WorkoutService {
     }
 
     // delete workout by id
-    public void deleteWorkoutById(Long id) {
+    public boolean deleteWorkoutById(Long id) {
         workoutDAO.findById(id).ifPresent(workout -> {
             workoutDAO.deleteById(id);
             System.out.println("workout deleted by id: " + workout.getName());
         });
+        return false;
     }
 
     // get last workout
