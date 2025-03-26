@@ -88,3 +88,49 @@
 //                .orElseGet(() -> ResponseEntity.notFound().build());
 //
 //}
+
+package app.controllers;
+
+import app.entities.Meal;
+import app.services.MealService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/meals")
+public class MealController {
+
+    private final MealService mealService;
+
+    @Autowired
+    public MealController(MealService mealService) {
+        this.mealService = mealService;
+    }
+
+    // Endpoint to fetch all meals
+    @GetMapping
+    public List<Meal> fetchMeals() {
+        mealService.fetchAndSaveMultipleMeals();
+        return mealService.getAllMeals();
+    }
+
+    // Endpoint to add a random meal
+    @PostMapping
+    public Meal addMeal() {
+        return mealService.fetchAndSaveRandomMeal();
+    }
+
+//    // Endpoint to update meal by id
+//    @PutMapping("/{id}")
+//    public Meal updateMeal(@PathVariable Long id, @RequestBody Meal meal) {
+//        return mealService.updateMealById(id, meal);
+//    }
+
+//    // Endpoint to delete meal by id
+//    @DeleteMapping("/{id}")
+//    public void deleteMeal(@PathVariable Long id) {
+//        mealService.deleteMealById(id);
+//    }
+}

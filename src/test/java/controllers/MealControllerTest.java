@@ -10,11 +10,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
 class MealControllerTest {
@@ -25,54 +29,58 @@ class MealControllerTest {
     @InjectMocks
     private MealController mealController;
 
-    private Meal meal;
-    private MealDTO mealDTO;
+    private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
-        meal = new Meal(1L, "Test Meal", "Category", "Area", "Instructions", "https://example.com/image.jpg", null);
-        mealDTO = new MealDTO("1", "Updated Meal", "Updated Category", "Updated Area", "Updated Instructions", "https://example.com/updated-image.jpg", null);
+        mockMvc = MockMvcBuilders.standaloneSetup(mealController).build();
     }
 
     @Test
-    void testCreateMeal() {
-        when(mealService.createMeal(any(MealDTO.class))).thenReturn(meal);
+    void testFetchMeals() throws Exception {
+        mockMvc.perform(get("/api/meals"))
+                .andExpect(status().isOk());
 
-        Meal createdMeal = mealController.createMeal(mealDTO);
-
-        assertNotNull(createdMeal);
-        assertEquals("Test Meal", createdMeal.getName());
-        verify(mealService, times(1)).createMeal(any(MealDTO.class));
+        verify(mealService, times(1)).fetchAndSaveMultipleMeals();
+        verify(mealService, times(1)).getAllMeals();
     }
 
     @Test
-    void testGetMealById() {
-        when(mealService.getMealById(1L)).thenReturn(Optional.of(meal));
+    void testAddMeal() throws Exception {
+        Meal meal = new Meal();
+        meal.setName("New Meal");
 
-        Optional<Meal> foundMeal = mealController.getMealById(1L);
+        when(mealService.fetchAndSaveRandomMeal()).thenReturn(meal);
 
-        assertTrue(foundMeal.isPresent());
-        assertEquals("Test Meal", foundMeal.get().getName());
-        verify(mealService, times(1)).getMealById(1L);
+        mockMvc.perform(post("/api/meals"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("New Meal"));
+
+        verify(mealService, times(1)).fetchAndSaveRandomMeal();
     }
 
-    @Test
-    void testUpdateMeal() {
-        when(mealService.updateMealById(1L, mealDTO)).thenReturn(true);
-
-        boolean updated = mealController.updateMeal(1L, mealDTO).hasBody();
-
-        assertTrue(updated);
-        verify(mealService, times(1)).updateMealById(1L, mealDTO);
-    }
-
-    @Test
-    void testDeleteMeal() {
-        when(mealService.deleteMealById(1L)).thenReturn(true);
-
-        boolean deleted = mealController.deleteMeal(1L).hasBody();
-
-        assertTrue(deleted);
-        verify(mealService, times(1)).deleteMealById(1L);
-    }
+//    @Test
+//    void testUpdateMealById() throws Exception {
+//        MealDTO mealDTO = new MealDTO("10", "Updated Meal", "Category", "Area", "Instructions", "image_url", null);
+//        when(mealService.updateMealById(10L, mealDTO)).thenReturn(true);
+//
+//        mockMvc.perform(put("/api/meals/update/{id}", 10L)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content("{\"idMeal\": \"10\", \"strMeal\": \"Updated Meal\", \"strCategory\": \"Category\", \"strArea\": \"Area\", \"strInstructions\": \"Instructions\", \"strMealThumb\": \"image_url\"}"))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string("Meal updated successfully by ID!"));
+//
+//        verify(mealService, times(1)).updateMealById(eq(10L), any(MealDTO.class));
+//    }
+//
+//    @Test
+//    void testDeleteMealById() throws Exception {
+//        when(mealService.deleteMealById(20L)).thenReturn(true);
+//
+//        mockMvc.perform(delete("/api/meals/delete/{id}", 20L))
+//                .andExpect(status().isOk())
+//                .andExpect(content().string("Meal deleted successfully by ID!"));
+//
+//        verify(mealService, times(1)).deleteMealById(20L);
+//    }
 }
