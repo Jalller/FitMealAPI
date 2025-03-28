@@ -43,7 +43,7 @@ public class HibernateConfig {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource);
-        em.setPackagesToScan("app.entities"); // ✅ Ensure it scans your entities
+        em.setPackagesToScan("app.entities"); // Ensure it scans your entities
         em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
         em.setJpaPropertyMap(jpaProperties());
 

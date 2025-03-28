@@ -1,0 +1,29 @@
+### LOGIN (get JWT)
+POST http://localhost:8081/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password"
+}
+
+### GET meals (token required)
+# Replace <PASTE_TOKEN_HERE> with the JWT from the login response
+GET http://localhost:8081/api/meals
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MzE5OTk2NywiZXhwIjoxNzQzMjAzNTY3fQ.Et-mIw6jd240B4ZLaDXSxcmfbsvqb_4G5KmHjfFVZ1Y
+
+### POST a random meal (admin only)
+POST http://localhost:8081/api/meals
+Authorization: Bearer <PASTE_TOKEN_HERE>
+
+### GET workouts (token required)
+GET http://localhost:8081/workouts
+Authorization: Bearer <PASTE_TOKEN_HERE>
+
+
+//✔️ Your token was accepted
+✔️ Role ADMIN was correctly extracted
+✔️ Controller returned the list of meals
+✔️ Serialization worked (no recursion, no lazy init crash)
+✔️ Response code 200 OK
+✔️ Your fetchAndSaveMultipleMeals() is running as expected

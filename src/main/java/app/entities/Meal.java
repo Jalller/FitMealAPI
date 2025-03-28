@@ -1,6 +1,6 @@
 package app.entities;
 
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,9 +29,9 @@ public class Meal {
 
     private String imageUrl;
 
-    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference // ✅ Prevent infinite recursion
     private List<Ingredient> ingredients;
-
 
     public Meal(String mealId, String name, String category, String area, String instructions, String imageUrl) {
         this.mealId = mealId;

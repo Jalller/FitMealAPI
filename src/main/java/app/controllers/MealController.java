@@ -94,6 +94,7 @@ package app.controllers;
 import app.entities.Meal;
 import app.services.MealService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -108,13 +109,20 @@ public class MealController {
     public MealController(MealService mealService) {
         this.mealService = mealService;
     }
-
-    // Endpoint to fetch all meals
     @GetMapping
+    @Transactional  // keep session open during JSON serialization
     public List<Meal> fetchMeals() {
         mealService.fetchAndSaveMultipleMeals();
         return mealService.getAllMeals();
     }
+
+//    // Endpoint to fetch all meals
+//    @GetMapping
+//    public List<Meal> fetchMeals() {
+//        mealService.fetchAndSaveMultipleMeals();
+//        return mealService.getAllMeals();
+//    }
+
 
     // Endpoint to add a random meal
     @PostMapping

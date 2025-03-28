@@ -1,10 +1,8 @@
 package app.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -22,12 +20,11 @@ public class Ingredient {
 
     @ManyToOne
     @JoinColumn(name = "meal_id", nullable = false)
+    @JsonBackReference // Prevent infinite recursion
     private Meal meal;
-
 
     public Ingredient(String ingredientName, Meal meal) {
         this.ingredientName = ingredientName;
         this.meal = meal;
     }
-
 }
