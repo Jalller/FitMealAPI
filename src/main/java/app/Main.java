@@ -12,8 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-import java.util.Optional;
-
 @SpringBootApplication
 @EntityScan(basePackages = "app.entities")
 public class Main {
