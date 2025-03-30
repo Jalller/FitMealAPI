@@ -21,7 +21,7 @@ GET http://localhost:8081/workouts
 Authorization: Bearer <PASTE_TOKEN_HERE>
 
 
-//✔️ Your token was accepted
+//Token was accepted
 ✔️ Role ADMIN was correctly extracted
 ✔️ Controller returned the list of meals
 ✔️ Serialization worked (no recursion, no lazy init crash)
