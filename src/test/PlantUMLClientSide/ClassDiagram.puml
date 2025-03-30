@@ -1,0 +1,39 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+@startuml ClassDiagram_Client
+
+class User {
+  - id
+  - username
+  - password
+  - roles
+}
+
+class Meal {
+  - id
+  - name
+  - category
+  - area
+  - instructions
+  - imageUrl
+  - List<Ingredient>
+}
+
+class Ingredient {
+  - id
+  - name
+}
+
+class Workout {
+  - id
+  - name
+  - category
+  - description
+}
+
+User --> Meal : owns >
+User --> Workout : tracks >
+Meal --> Ingredient : has >
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+@startuml DomainModel
+class User {
+  +username
+  +password
+}
+
+class Meal {
+  +name
+  +category
+  +area
+  +instructions
+  +imageUrl
+  +ingredients
+}
+
+class Workout {
+  +name
+  +category
+  +description
+}
+
+class Ingredient {
+  +name
+}
+
+User "1" -- "many" Meal : creates >
+User "1" -- "many" Workout : logs >
+
+Meal "1" -- "many" Ingredient
+
+@enduml

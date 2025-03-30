@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+@startuml UseCaseDiagram_Client
+left to right direction
+
+actor Client
+actor Admin
+
+rectangle "FitMeal API" {
+  usecase "Register / Login" as UC1
+  usecase "Browse Meals" as UC2
+  usecase "Save Favorite Meal" as UC3
+  usecase "Log Workout" as UC4
+  usecase "Update/Delete Own Data" as UC5
+  usecase "Admin: Manage All Data" as UC6
+}
+
+Client --> UC1
+Client --> UC2
+Client --> UC3
+Client --> UC4
+Client --> UC5
+
+Admin --> UC6
+@enduml
