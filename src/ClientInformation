@@ -1,0 +1,88 @@
+
+---
+
+## ✅ 2. `PITCH.md` (Client-Friendly Version)
+
+```markdown
+# 🍽️ FitMeal API – Fuel Your Fitness!
+
+### Simple, smart backend for meal planning and workouts 💪
+
+---
+
+## 🌟 What Is This?
+
+FitMeal API connects to external APIs to fetch:
+- Random meals from **TheMealDB**
+- Random workouts from **WGER**
+
+It saves the data, organizes it in a database, and makes it easy to:
+- Explore new meals
+- Track workouts
+- Plan healthy habits
+
+---
+
+## 🧠 Why It’s Cool
+
+✅ Pulls real data from external APIs
+✅ Lets you save meals and workouts
+✅ You can delete/update what you don’t want
+✅ Uses login system — so users have their own space (coming soon)
+
+---
+
+## 🔒 Secure & Smart
+
+- JWT login system with roles: `USER`, `ADMIN`
+- Admins can see and control everything
+- Users will soon only see *their own* content!
+
+---
+
+## 📅 Frontend Coming Soon
+
+This backend will power a future web app:
+- Users will log in
+- See their own meals/workouts
+- Get full weekly plans & calorie tracking
+
+---
+
+## 🧪 How We Built It
+
+| Part         | Tech Used           |
+|--------------|---------------------|
+| Language     | Java (Spring Boot)  |
+| DB           | PostgreSQL          |
+| Auth         | JWT (token system)  |
+| External APIs| TheMealDB, WGER     |
+| Deployment   | Docker + Caddy + DO |
+
+---
+
+## 🖼️ Diagrams
+
+**ERD (Database)**
+**Use Case (User interactions)**
+**Security Flow (JWT Login)**
+
+📍 Located in `docs/` folder – or just ask!
+
+---
+
+## 💡 What’s Next?
+
+- 🌍 A real frontend with login and weekly plans
+- 🍛 Users save their own data
+- 🔐 Admins manage everything
+
+---
+
+## 🙋 Who Built This?
+
+Jantie Larsen – aka `Jalller`
+(and Max the cat 🐱)
+
+Built as part of the **SP2 assignment** for Software Development 3.
+
