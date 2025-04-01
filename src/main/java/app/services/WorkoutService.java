@@ -1,8 +1,10 @@
 package app.services;
 
+import app.daos.WorkoutDAO;
 import app.dtos.WorkoutDTO;
 import app.entities.Workout;
-import app.daos.WorkoutDAO;
+import app.exceptions.ResourceNotFoundException;
+import app.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -11,9 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class WorkoutService {
@@ -24,12 +24,10 @@ public class WorkoutService {
         this.workoutDAO = workoutDAO;
     }
 
-    // fetch all workouts
     public List<Workout> getAllWorkouts() {
         return workoutDAO.findAll();
     }
 
-    // fetch and save a random workout
     public Workout fetchAndSaveRandomWorkout() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -42,8 +40,7 @@ public class WorkoutService {
             JsonNode rootNode = mapper.readTree(response.body());
 
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
-                System.out.println("no workout data found.");
-                return null;
+                throw new ResourceNotFoundException("No workout data found in API.");
             }
 
             Random random = new Random();
@@ -52,16 +49,16 @@ public class WorkoutService {
 
             String category = workoutNode.has("category") && workoutNode.get("category").has("name")
                     ? workoutNode.get("category").get("name").asText()
-                    : "unknown category";
+                    : "Unknown Category";
 
-            String name = "unknown workout";
-            String description = "no description available.";
+            String name = "Unnamed Workout";
+            String description = "No description available.";
 
             if (workoutNode.has("translations") && workoutNode.get("translations").isArray()) {
                 for (JsonNode translation : workoutNode.get("translations")) {
-                    if (translation.has("language") && translation.get("language").asInt() == 2) { // english
-                        name = translation.has("name") ? translation.get("name").asText() : name;
-                        description = translation.has("description") ? translation.get("description").asText() : description;
+                    if (translation.has("language") && translation.get("language").asInt() == 2) {
+                        name = translation.path("name").asText(name);
+                        description = translation.path("description").asText(description);
                         break;
                     }
                 }
@@ -73,22 +70,14 @@ public class WorkoutService {
                     category,
                     description
             );
-            workout = workoutDAO.save(workout);
 
-            System.out.println("\n===== workout saved to database =====");
-            System.out.println("name: " + workout.getName());
-            System.out.println("category: " + workout.getCategory());
-            System.out.println("description: " + workout.getDescription());
-
-            return workout;
+            return workoutDAO.save(workout);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch/save random workout: " + e.getMessage());
         }
-        return null;
     }
 
-    // fetch & save multiple workouts
     public void fetchAndSaveMultipleWorkouts() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -101,127 +90,112 @@ public class WorkoutService {
             JsonNode rootNode = mapper.readTree(response.body());
 
             if (!rootNode.has("results") || rootNode.get("results").isEmpty()) {
-                System.out.println("no workout data found.");
-                return;
+                throw new ResourceNotFoundException("No workout data found for multiple fetch.");
             }
 
-            List<Workout> workouts = rootNode.get("results").findValuesAsText("id").stream().map(id -> {
-                JsonNode workoutNode = rootNode.get("results").get(0);
+            List<Workout> workouts = new ArrayList<>();
+
+            for (JsonNode workoutNode : rootNode.get("results")) {
                 String category = workoutNode.has("category") && workoutNode.get("category").has("name")
                         ? workoutNode.get("category").get("name").asText()
-                        : "unknown category";
+                        : "Unknown Category";
 
-                String name = "unknown workout";
-                String description = "no description available.";
+                String name = "Unnamed Workout";
+                String description = "No description available.";
 
                 if (workoutNode.has("translations") && workoutNode.get("translations").isArray()) {
                     for (JsonNode translation : workoutNode.get("translations")) {
-                        if (translation.has("language") && translation.get("language").asInt() == 2) { // english
-                            name = translation.has("name") ? translation.get("name").asText() : name;
-                            description = translation.has("description") ? translation.get("description").asText() : description;
+                        if (translation.has("language") && translation.get("language").asInt() == 2) {
+                            name = translation.path("name").asText(name);
+                            description = translation.path("description").asText(description);
                             break;
                         }
                     }
                 }
 
-                return new Workout(id, name, category, description);
-            }).toList();
+                workouts.add(new Workout(workoutNode.get("id").asText(), name, category, description));
+            }
 
             workoutDAO.saveAll(workouts);
-            System.out.println("\n===== multiple workouts saved to database =====");
-            System.out.println(workouts.size() + " workouts saved!");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch/save multiple workouts: " + e.getMessage());
         }
     }
 
-    // update workout by id
-    public Workout updateWorkout(Long id, WorkoutDTO workoutDTO) {
-        return workoutDAO.findById(id).map(workout -> {
-            workout.setName(workoutDTO.getName());
-            workout.setCategory(workoutDTO.getCategory());
-            workout.setDescription(workoutDTO.getDescription());
-            return workoutDAO.save(workout);
-        }).orElseThrow(() -> new RuntimeException("workout not found with id: " + id));
+    public Workout updateWorkout(Long id, WorkoutDTO dto) {
+        return workoutDAO.findById(id).map(w -> {
+            w.setName(dto.getName());
+            w.setCategory(dto.getCategory());
+            w.setDescription(dto.getDescription());
+            return workoutDAO.save(w);
+        }).orElseThrow(() -> new ResourceNotFoundException("Workout not found with ID: " + id));
     }
 
-    // delete workout by id
+    public boolean updateWorkoutById(Long id, WorkoutDTO dto) {
+        return workoutDAO.findById(id).map(w -> {
+            w.setName(dto.getName());
+            w.setCategory(dto.getCategory());
+            w.setDescription(dto.getDescription());
+            workoutDAO.save(w);
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("Workout not found with ID: " + id));
+    }
+
     public void deleteWorkout(Long id) {
         if (workoutDAO.existsById(id)) {
             workoutDAO.deleteById(id);
-            System.out.println("workout deleted: id " + id);
         } else {
-            throw new RuntimeException("workout not found with id: " + id);
+            throw new ResourceNotFoundException("Workout not found with ID: " + id);
         }
     }
 
-    // update first available workout
-    public void updateFirstAvailableWorkout() {
-        workoutDAO.findAll().stream().findFirst().ifPresent(workout -> {
-            workout.setName("updated workout name");
-            workout.setCategory("updated category");
-            workout.setDescription("updated workout description...");
-            workoutDAO.save(workout);
-            System.out.println("workout updated: " + workout.getName());
-        });
-    }
-
-    // update workout by id
-    public boolean updateWorkoutById(Long id, WorkoutDTO workoutDTO) {
-        workoutDAO.findById(id).ifPresent(workout -> {
-            workout.setName(workoutDTO.getName());
-            workout.setCategory(workoutDTO.getCategory());
-            workout.setDescription(workoutDTO.getDescription());
-            workoutDAO.save(workout);
-            System.out.println("workout updated by id: " + workout.getName());
-        });
-        return false;
-    }
-
-    // delete first available workout
-    public void deleteFirstAvailableWorkout() {
-        workoutDAO.findAll().stream().findFirst().ifPresent(workout -> {
-            workoutDAO.deleteById(workout.getId());
-            System.out.println("workout deleted: " + workout.getName());
-        });
-    }
-
-    // delete workout by id
     public boolean deleteWorkoutById(Long id) {
-        workoutDAO.findById(id).ifPresent(workout -> {
+        return workoutDAO.findById(id).map(w -> {
             workoutDAO.deleteById(id);
-            System.out.println("workout deleted by id: " + workout.getName());
-        });
-        return false;
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("Workout not found with ID: " + id));
     }
 
-    // get last workout
+    public void updateFirstAvailableWorkout() {
+        workoutDAO.findAll().stream().findFirst().map(w -> {
+            w.setName("updated workout name");
+            w.setCategory("updated category");
+            w.setDescription("updated workout description...");
+            return workoutDAO.save(w);
+        }).orElseThrow(() -> new ResourceNotFoundException("No workouts available to update."));
+    }
+
+    public void deleteFirstAvailableWorkout() {
+        workoutDAO.findAll().stream().findFirst().map(w -> {
+            workoutDAO.deleteById(w.getId());
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("No workouts available to delete."));
+    }
+
     public Optional<Workout> getLastWorkout() {
         return workoutDAO.findAll().stream()
-                .sorted((w1, w2) -> w2.getId().compareTo(w1.getId())) // sort by id desc
+                .sorted((w1, w2) -> w2.getId().compareTo(w1.getId()))
                 .findFirst();
     }
 
-    // update last workout
     public void updateLastAvailableWorkout() {
-        getLastWorkout().ifPresent(workout -> {
-            workout.setName("updated last workout name");
-            workout.setCategory("updated last category");
-            workout.setDescription("updated last workout description...");
-            workoutDAO.save(workout);
-            System.out.println("workout updated: " + workout.getName());
-        });
+        getLastWorkout().map(w -> {
+            w.setName("updated last workout name");
+            w.setCategory("updated last category");
+            w.setDescription("updated last workout description...");
+            return workoutDAO.save(w);
+        }).orElseThrow(() -> new ResourceNotFoundException("No last workout available to update."));
     }
 
-    // delete last workout
     public void deleteLastAvailableWorkout() {
-        getLastWorkout().ifPresentOrElse(
-                workout -> {
-                    workoutDAO.deleteById(workout.getId());
-                    System.out.println("workout deleted: " + workout.getName());
-                },
-                () -> { throw new RuntimeException("no workouts found to delete!"); }
-        );
+        getLastWorkout().map(w -> {
+            workoutDAO.deleteById(w.getId());
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("No workouts found to delete."));
+    }
+
+    public void restrictedAdminAction(boolean isAdmin) {
+        if (!isAdmin) throw new UnauthorizedException("Admin privileges required.");
     }
 }

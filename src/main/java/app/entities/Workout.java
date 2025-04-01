@@ -24,7 +24,6 @@ public class Workout {
     private String description;
 
 
-
     public Workout(String workoutId, String name, String category, String description) {
         this.workoutId = workoutId;
         this.name = name;

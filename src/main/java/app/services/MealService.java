@@ -1,8 +1,10 @@
 package app.services;
 
+import app.daos.MealDAO;
 import app.dtos.MealDTO;
 import app.entities.Meal;
-import app.daos.MealDAO;
+import app.exceptions.ResourceNotFoundException;
+import app.exceptions.UnauthorizedException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,6 @@ public class MealService {
         this.mealDAO = mealDAO;
     }
 
-    // fetch & save one random meal
     public Meal fetchAndSaveRandomMeal() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -51,21 +52,19 @@ public class MealService {
                 return mealDAO.save(meal);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to fetch/save random meal: " + e.getMessage());
         }
-        return null;
+        throw new ResourceNotFoundException("No meal returned from API.");
     }
 
-    // fetch & save multiple meals at once
     public void fetchAndSaveMultipleMeals() {
         String[] categories = {"Chicken", "Beef", "Vegetarian", "Seafood"};
 
         for (String category : categories) {
-            String apiUrl = CATEGORY_MEAL_API + category;
             try {
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(apiUrl))
+                        .uri(URI.create(CATEGORY_MEAL_API + category))
                         .build();
 
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -83,111 +82,106 @@ public class MealService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                System.err.println("Error fetching category: " + category + " – " + e.getMessage());
             }
         }
-        System.out.println("fetched and saved multiple meals from categories");
     }
 
-    // get all meals
     public List<Meal> getAllMeals() {
         return mealDAO.findAll();
     }
 
-    // update meal by id
     public Meal updateMeal(Long id, MealDTO mealDTO) {
+        return mealDAO.findById(id)
+                .map(meal -> {
+                    meal.setName(mealDTO.getStrMeal());
+                    meal.setCategory(mealDTO.getStrCategory());
+                    meal.setArea(mealDTO.getStrArea());
+                    meal.setInstructions(mealDTO.getStrInstructions());
+                    meal.setImageUrl(mealDTO.getStrMealThumb());
+                    return mealDAO.save(meal);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("Meal not found with ID: " + id));
+    }
+
+    public void deleteMeal(Long id) {
+        if (mealDAO.existsById(id)) {
+            mealDAO.deleteById(id);
+        } else {
+            throw new ResourceNotFoundException("Meal not found with ID: " + id);
+        }
+    }
+
+    public void updateFirstAvailableMeal() {
+        mealDAO.findAll().stream().findFirst()
+                .map(meal -> {
+                    meal.setName("updated meal name");
+                    meal.setCategory("updated category");
+                    meal.setArea("updated area");
+                    meal.setInstructions("updated instructions...");
+                    meal.setImageUrl("https://example.com/updated-image.jpg");
+                    return mealDAO.save(meal);
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("No meals available to update."));
+    }
+
+    public boolean updateMealById(Long id, MealDTO mealDTO) {
         return mealDAO.findById(id).map(meal -> {
             meal.setName(mealDTO.getStrMeal());
             meal.setCategory(mealDTO.getStrCategory());
             meal.setArea(mealDTO.getStrArea());
             meal.setInstructions(mealDTO.getStrInstructions());
             meal.setImageUrl(mealDTO.getStrMealThumb());
-            return mealDAO.save(meal);
-        }).orElseThrow(() -> new RuntimeException("meal not found with id: " + id));
-    }
-
-    // delete meal by id
-    public void deleteMeal(Long id) {
-        if (mealDAO.existsById(id)) {
-            mealDAO.deleteById(id);
-            System.out.println("meal deleted: id " + id);
-        } else {
-            throw new RuntimeException("meal not found with id: " + id);
-        }
-    }
-
-    // update the first available meal
-    public void updateFirstAvailableMeal() {
-        mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
-            meal.setName("updated meal name");
-            meal.setCategory("updated category");
-            meal.setArea("updated area");
-            meal.setInstructions("updated instructions...");
-            meal.setImageUrl("https://example.com/updated-image.jpg");
             mealDAO.save(meal);
-            System.out.println("meal updated: " + meal.getName());
-        });
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("Meal not found with ID: " + id));
     }
 
-    // update meal by id
-    public boolean updateMealById(Long id, MealDTO mealDTO) {
-        mealDAO.findById(id).ifPresent(meal -> {
-            meal.setName(mealDTO.getStrMeal());
-            meal.setCategory(mealDTO.getStrCategory());
-            meal.setArea(mealDTO.getStrArea());
-            meal.setInstructions(mealDTO.getStrInstructions());
-            meal.setImageUrl(mealDTO.getStrMealThumb());
-            mealDAO.save(meal);
-            System.out.println("meal updated by id: " + meal.getName());
-        });
-        return false;
-    }
-
-    // delete the first available meal
     public void deleteFirstAvailableMeal() {
-        mealDAO.findAll().stream().findFirst().ifPresent(meal -> {
-            mealDAO.deleteById(meal.getId());
-            System.out.println("meal deleted: " + meal.getName());
-        });
+        mealDAO.findAll().stream().findFirst()
+                .map(meal -> {
+                    mealDAO.deleteById(meal.getId());
+                    return true;
+                })
+                .orElseThrow(() -> new ResourceNotFoundException("No meals available to delete."));
     }
 
-    // delete meal by id
     public boolean deleteMealById(Long id) {
-        mealDAO.findById(id).ifPresent(meal -> {
+        return mealDAO.findById(id).map(meal -> {
             mealDAO.deleteById(id);
-            System.out.println("meal deleted by id: " + meal.getName());
-        });
-        return false;
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("Meal not found with ID: " + id));
     }
 
-    // get the last available meal
     public Optional<Meal> getLastMeal() {
         return mealDAO.findAll().stream()
                 .sorted((m1, m2) -> m2.getId().compareTo(m1.getId()))
                 .findFirst();
     }
 
-    // update the last available meal
     public void updateLastAvailableMeal() {
-        getLastMeal().ifPresent(meal -> {
+        getLastMeal().map(meal -> {
             meal.setName("updated last meal name");
             meal.setCategory("updated last category");
             meal.setArea("updated last area");
             meal.setInstructions("updated last instructions...");
             meal.setImageUrl("https://example.com/updated-last-image.jpg");
-            mealDAO.save(meal);
-            System.out.println("meal updated: " + meal.getName());
-        });
+            return mealDAO.save(meal);
+        }).orElseThrow(() -> new ResourceNotFoundException("No last meal available to update."));
     }
 
-    // delete the last available meal
     public void deleteLastAvailableMeal() {
-        getLastMeal().ifPresentOrElse(
-                meal -> {
-                    mealDAO.deleteById(meal.getId());
-                    System.out.println("meal deleted: " + meal.getName());
-                },
-                () -> { throw new RuntimeException("no meals found to delete!"); }
-        );
+        getLastMeal().map(meal -> {
+            mealDAO.deleteById(meal.getId());
+            return true;
+        }).orElseThrow(() -> new ResourceNotFoundException("No meals found to delete!"));
+    }
+
+    // 🔐 BONUS: If needed later — add role/permission check like this:
+    public void restrictedAdminAction(boolean isAdmin) {
+        if (!isAdmin) {
+            throw new UnauthorizedException("Only admins are allowed to perform this action.");
+        }
+        // Continue with logic...
     }
 }
