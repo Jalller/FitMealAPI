@@ -12,6 +12,11 @@ Content-Type: application/json
 GET http://localhost:8081/api/meals
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MzUzNDA1NiwiZXhwIjoxNzQzNTM3NjU2fQ.KXBJ6ajn4NAJAoKp3RFJZiXeuhUGqR43X3PYY5-0vPM
 
+### GET meals (token required)
+GET http://142.93.108.228:8081/api/meals
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc0MzU0MTI2NSwiZXhwIjoxNzQzNTQ0ODY1fQ.vOqrF5xvtRm_ryJFgITEgsVQxa_R2_CmaaeTyY_UiXA
+
+
 ### POST a random meal (admin only)
 POST http://localhost:8081/api/meals
 Authorization: Bearer <PASTE_TOKEN_HERE>
@@ -27,3 +32,12 @@ Authorization: Bearer <PASTE_TOKEN_HERE>
 ✔️ Serialization worked (no recursion, no lazy init crash)
 ✔️ Response code 200 OK
 ✔️ Your fetchAndSaveMultipleMeals() is running as expected
+
+//### LOGIN (get JWT)
+POST http://142.93.108.228:8081/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password"
+}

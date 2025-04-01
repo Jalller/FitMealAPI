@@ -1,14 +1,12 @@
-# Use OpenJDK 17
-FROM eclipse-temurin:17-jdk
-
-# Set working dir
+# Use Maven to build, then run JAR
+FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Copy project
 COPY . .
+RUN mvn clean package -DskipTests
 
-# Build the app (skip tests for speed)
-RUN ./mvnw package -DskipTests
-
-# Run the built JAR
-CMD ["java", "-jar", "target/moviefetcher-1.0.0.jar"]
+# Use a lightweight JDK image for running the JAR
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE 8081
+CMD ["java", "-jar", "app.jar"]
