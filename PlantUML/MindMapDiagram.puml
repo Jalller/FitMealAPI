@@ -1,0 +1,27 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+caption figure 1
+title FitMealAPI
+
+
+* FitMealAPI
+** Auth
+*** JWT
+*** Role-based
+** Features
+*** Meals
+**** Fetch Random
+**** Fetch by Category
+**** Save to DB
+*** Workouts
+**** Fetch Random
+**** Fetch Multiple
+** Testing
+*** Unit Tests
+*** Controller Tests
+*** DAO Tests
+** Deployment
+*** Docker
+*** DigitalOcean
+@endmindmap

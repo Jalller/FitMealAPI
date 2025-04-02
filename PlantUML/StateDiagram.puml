@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/state-diagram
+
+
+
+[*] --> LoggedOut
+
+LoggedOut --> LoggedIn : Login success
+LoggedOut --> Blocked : 403 / Invalid credentials
+
+LoggedIn --> LoggedOut : Logout
+LoggedIn --> Expired : JWT expires
+@enduml
+
+//User session state

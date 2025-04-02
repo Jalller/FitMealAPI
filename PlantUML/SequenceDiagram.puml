@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+actor User
+participant "AuthController" as Auth
+participant "AppUserDetailsService" as Service
+participant "JwtUtil" as JWT
+participant "SecurityConfig" as Security
+
+User -> Auth : POST /auth/login (username, password)
+Auth -> Service : loadUserByUsername()
+Service --> Auth : UserDetails
+Auth -> JWT : generateToken(UserDetails)
+JWT --> Auth : JWT token
+Auth --> User : 200 OK + JWT token
+@enduml
+
+//JWT login flow

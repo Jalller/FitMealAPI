@@ -1,0 +1,20 @@
+@startuml
+'https://plantuml.com/object-diagram
+
+object user {
+  id = 1
+  username = "testuser"
+  roles = [ADMIN]
+}
+
+object meal {
+  id = 5
+  name = "Chicken Tikka"
+  category = "Indian"
+  area = "Asia"
+}
+
+user --> meal : owns >
+@enduml
+
+//Example instance

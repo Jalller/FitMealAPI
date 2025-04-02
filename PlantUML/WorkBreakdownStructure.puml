@@ -1,0 +1,25 @@
+@startwbs
+'https://plantuml.com/wbs-diagram
+* FitMealAPI
+** Backend
+*** Setup Project
+*** Create Entities & Repos
+*** Service Layer
+*** Controller Layer
+*** External API Integration
+** Security
+*** Spring Security
+*** JWT Auth
+*** Role Management
+** Testing
+*** JUnit
+*** MockMVC
+*** DAO Tests
+** Deployment
+*** Docker
+*** Compose
+*** DigitalOcean
+** Documentation
+*** README
+*** Diagrams
+@endwbs

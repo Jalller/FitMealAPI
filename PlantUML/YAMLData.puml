@@ -1,0 +1,10 @@
+@startyaml
+meal:
+  idMeal: "52772"
+  name: "Teriyaki Chicken Casserole"
+  category: "Chicken"
+  area: "Japanese"
+  instructions: "Preheat oven..."
+  imageUrl: "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg"
+@endyaml
+

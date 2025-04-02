@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+start
+:Send HTTP request to TheMealDB;
+:Parse JSON meal response;
+if (Meal exists?) then (Yes)
+  :Map to Meal entity;
+  :Save to DB;
+else (No)
+  :Return error/null;
+endif
+stop
+@enduml
+
+//Fetch and save meal

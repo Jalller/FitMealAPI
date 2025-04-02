@@ -1,0 +1,68 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+@startuml
+' Use skinparam for better styling (optional)
+skinparam classAttributeIconSize 0
+
+class User {
+  +Long id
+  +String username
+  +String password
+  +Set<Role> roles
+}
+
+class Role {
+  +Long id
+  +RoleType name
+}
+
+enum RoleType {
+  USER
+  ADMIN
+}
+
+class Meal {
+  +Long id
+  +String idMeal
+  +String name
+  +String category
+  +String area
+  +String instructions
+  +String imageUrl
+}
+
+class Workout {
+  +Long id
+  +String workoutId
+  +String name
+  +String category
+  +String description
+}
+
+class Ingredient {
+  +Long id
+  +String name
+  +String measure
+  +Long mealId
+}
+
+' Relationships
+User "1" -- "*" Role : has >
+User "1" --> "*" Meal : owns >
+User "1" --> "*" Workout : owns >
+
+Meal "1" --> "*" Ingredient : contains >
+@enduml
+
+
+//User has many Roles (many-to-many via Set)
+
+  User is expected to eventually have 1:N relationships with Meal and Workout (per roadmap)
+
+  Meal has multiple Ingredients
+
+  Enum RoleType is used inside the Role class
+
+  //User and admin interaction

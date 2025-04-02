@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+package "FitMealAPI" {
+  [Main] --> [Controllers]
+  [Controllers] --> [Services]
+  [Services] --> [DAOs]
+  [DAOs] --> [Database]
+
+  [Controllers] --> [Security]
+  [Security] --> [JWT]
+}
+
+[External API: TheMealDB] --> [Services]
+[External API: WGER] --> [Services]
+@enduml
+
+//Project architecture

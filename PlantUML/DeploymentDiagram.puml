@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+
+node "Digital Ocean Droplet" {
+  component "Spring Boot App"
+  component "PostgreSQL DB"
+}
+
+node "Client" {
+  [Browser/Postman]
+}
+
+[Browser/Postman] --> "Spring Boot App" : HTTP
+"Spring Boot App" --> "PostgreSQL DB" : JDBC
+@enduml
+
