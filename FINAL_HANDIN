@@ -126,3 +126,73 @@ API Docs	✅	test-api.http (for localhost + prod)
 Diagrams	✅	/docs folder
 👏 Thank you for reading!
 Jantie & 🐱 Max out.
+
+🛰️ FitMeal Deployment Preview
+🌍 Live Domain
+Your backend is successfully deployed and live at:
+
+🔗 https://jjldomain.dk
+
+Caddy handles the reverse proxy and SSL (HTTPS).
+
+✅ What’s Working
+Feature	Status	Notes
+Server responds on domain	✅ Done	Confirmed via curl and browser with 403 (auth protected)
+JWT login	✅ Done	POST /auth/login works, returns valid JWT
+Protected meal fetch	✅ Done	GET /api/meals works with token (403 without token)
+Caddy reverse proxy config	✅ Done	Live and auto-renewing HTTPS from Let's Encrypt
+DigitalOcean droplet setup	✅ Done	Docker containers running: PostgreSQL + Spring Boot app
+Domain linked to server IP	✅ Done	DNS records pointed correctly → ping shows correct IP
+🧪 How to Test It
+Login (get token):
+
+http
+Copy
+POST https://jjldomain.dk/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password"
+}
+Use token to fetch meals:
+
+http
+Copy
+GET https://jjldomain.dk/api/meals
+Authorization: Bearer <PASTE_TOKEN_HERE>
+You can automate this inside your .http file using:
+
+http
+Copy
+### Login & store token
+@jwt_token = {{login.response.body.$.token}}
+
+### Fetch meals using token
+GET https://jjldomain.dk/api/meals
+Authorization: Bearer {{jwt_token}}
+👀 What Happens If…
+Scenario	Response
+Visiting domain directly in browser	403 Forbidden (as expected – secured API)
+Invalid or expired token	403 Forbidden
+No token provided	403 Forbidden
+Valid token with wrong role	403 Forbidden (if accessing admin routes)
+Valid token with correct role	200 OK with JSON meal data
+💡 Want to Auto-Open Browser with Data?
+You can’t open the browser with JSON after login in .http files, but you can:
+
+Use an HTTP client browser extension to save the token and hit your endpoint
+
+Or build a tiny front-end page to make a fetch() call to /api/meals with the token
+
+Or just keep using .http files in IntelliJ for testing
+
+🛑 Why Does jjldomain.dk Return 403?
+Because your / root route isn’t defined or exposed in Spring. Your app is a secured API — not a public homepage. So Caddy forwards the request to Spring Boot, which replies with 403 Forbidden unless a valid token is provided.
+
+📦 Summary
+✔️ Production-ready backend
+✔️ Secure JWT authentication
+✔️ Deployed live with HTTPS
+✔️ Connected custom domain
+✔️ Reverse proxy, firewall, Docker all set

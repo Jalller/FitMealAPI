@@ -36,3 +36,10 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+.FINAL_HANDIN/
+.login-and-fetch.sh/
+ClientInformation
+FINAL_HANDIN
+login-and-fetch.sh/
+
