@@ -30,7 +30,7 @@ public class AuthController {
         String username = loginData.get("username");
         String password = loginData.get("password");
 
-        // This will authenticate against your in-memory user store
+        // Authenticate credentials
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
@@ -43,10 +43,18 @@ public class AuthController {
                 .map(auth -> auth.getAuthority().replace("ROLE_", ""))
                 .orElse("USER");
 
-        // Print authority for debug
+        // For debug
         System.out.println("Login successful for: " + username + " with role: " + role);
 
         String token = jwtUtil.generateToken(username, role);
-        return ResponseEntity.ok(Map.of("token", token));
+
+        // You can use this link to go directly to your meals API using the token
+        String quickAccessUrl = "https://jjldomain.dk/api/meals?token=" + token;
+
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", role,
+                "quick_access_url", quickAccessUrl
+        ));
     }
 }

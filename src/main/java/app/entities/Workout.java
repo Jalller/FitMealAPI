@@ -23,6 +23,10 @@ public class Workout {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // ✅ NEW: link workout to user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Workout(String workoutId, String name, String category, String description) {
         this.workoutId = workoutId;
@@ -30,5 +34,4 @@ public class Workout {
         this.category = category;
         this.description = description;
     }
-
 }

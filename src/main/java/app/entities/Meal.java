@@ -33,6 +33,11 @@ public class Meal {
     @JsonManagedReference // ✅ Prevent infinite recursion
     private List<Ingredient> ingredients;
 
+    // ✅ NEW: link meal to user
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Meal(String mealId, String name, String category, String area, String instructions, String imageUrl) {
         this.mealId = mealId;
         this.name = name;
