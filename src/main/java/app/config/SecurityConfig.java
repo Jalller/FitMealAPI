@@ -29,7 +29,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())  // Disable CSRF for simplicity (not recommended for production)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()  // Allow login route
+                        .requestMatchers("/", "/auth/**").permitAll()  // Allow root and login routes
                         .requestMatchers("/api/meals/**").hasRole("ADMIN")  // Spring will check ROLE_ADMIN
                         .requestMatchers("/workouts/**").authenticated()     // Any authenticated user can access workouts
                         .anyRequest().authenticated()  // Secure all other endpoints

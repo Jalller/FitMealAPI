@@ -1,0 +1,128 @@
+🏁 Project Summary
+Project: FitMealAPI
+Author: Jantie Larsen
+Student ID: cph-jl398
+Submitted: April 2025
+
+
+A secure and production-ready Java backend for tracking healthy meals and workouts, built using Spring Boot. Supports
+login with JWT, role-based access control, integration with external APIs, and full CRUD functionality.
+
+🔧 Tech Stack
+Layer	Tech
+Language	Java 17
+Framework	Spring Boot 3
+ORM	JPA + Hibernate
+DB	PostgreSQL
+Security	Spring Security + JWT
+Build Tool	Maven
+Deployment	Docker, DigitalOcean, Caddy
+Docs/Diagrams	PlantUML
+
+
+🌐 Deployment Info
+Domain	https://jjldomain.dk
+Server	DigitalOcean Droplet (Ubuntu 24.10)
+Reverse Proxy	Caddy (Auto HTTPS via Let's Encrypt)
+Database	PostgreSQL (Docker container)
+API Port	8081 (Internally mapped by Caddy)
+
+
+🔐 Login Info (for testing)
+Username	Password	Role
+testuser	password	ADMIN
+Use /auth/login to receive a JWT token. Add it to protected requests like this:
+
+
+Authorization: Bearer <TOKEN>
+📮 Example API Requests
+1. 🔐 Login (Get JWT)
+
+POST https://jjldomain.dk/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password"
+}
+
+
+2. 🍽️ Get Meals (Protected - ADMIN)
+
+GET https://jjldomain.dk/api/meals
+Authorization: Bearer {{jwt_token}}
+
+
+3. 🏋️ Get Workouts (Protected - USER/ADMIN)
+
+GET https://jjldomain.dk/workouts
+Authorization: Bearer {{jwt_token}}
+
+✅ Features Implemented
+Feature	Description	Status
+Fetch & store meals from TheMealDB	External API integration
+Fetch & store workouts from WGER	External API integration
+Save, update, delete meal/workout	Full CRUD operations
+Secure login with JWT	Role-based auth (ADMIN/USER)
+Spring Security filter config	JWT + Bcrypt + filter chain
+Manual API test suite (http file)	For local + deployed testing
+Docker containerization	For app + db
+Deployment to DigitalOcean	Reverse proxy, HTTPS
+Domain + SSL config (jjldomain.dk)	Accessible externally
+Class + Sequence + Use Case diagrams	Via PlantUML
+
+
+📊 Diagrams
+Class Diagram: src/main/resources/docs/ClassDiagram.puml
+
+Use Case Diagram: src/main/resources/docs/UseCaseDiagram.puml
+
+Sequence Diagram: src/main/resources/docs/SequenceDiagram.puml
+
+Domain Model & Architecture overview
+
+All diagrams included in /docs folder and available via PlantUML.
+
+
+💬 Notes
+🔄 Misunderstanding on Framework
+While the assignment originally asked for Javalin, I misunderstood and went with Spring Boot from the beginning.
+This was a conscious decision in the end — prioritizing security, production readiness, and learning goals over sticking
+with the exact tech mentioned.
+
+🔐 CORS, 403, and / Root Path
+Root path (/) returns HTTP 403 intentionally. It's a secure backend — only valid JWT-authenticated users can access
+protected data (e.g. /api/meals, /workouts). No frontend is exposed yet — to be built in next module.
+
+
+🧪 Test Coverage
+Layer	Tools	Tested Classes
+DAO	JUnit + H2	MealDAOTests, WorkoutDAOTests
+Service	JUnit + Mockito	MealServiceTests, WorkoutServiceTests
+Controller	Spring MockMvc	MealControllerTest, WorkoutControllerTest
+
+
+🚀 How to Run (Locally)
+
+# Clone project
+git clone https://github.com/Jalller/FitMealAPI.git
+cd FitMealAPI
+
+# Run with Maven
+./mvnw spring-boot:run
+Database config in application.properties.
+
+✅ FINAL STATUS
+Requirement	Done	Where / Notes
+Secure login with JWT	✅	Spring Security + JWT + Bcrypt
+Role-based route protection	✅	USER vs ADMIN in SecurityConfig.java
+CRUD for Meal and Workout	✅	/api/meals/** and /workouts/**
+Integration with 2 APIs	✅	TheMealDB + WGER
+Tests for DAO, Service, Controller	✅	6 test classes
+Docker setup	✅	Dockerfile + docker-compose.yml
+Deployment	✅	On DigitalOcean with Caddy
+Custom domain + HTTPS	✅	https://jjldomain.dk
+API Docs	✅	test-api.http (for localhost + prod)
+Diagrams	✅	/docs folder
+👏 Thank you for reading!
+Jantie & 🐱 Max out.
