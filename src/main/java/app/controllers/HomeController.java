@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "👋 Welcome to FitMealAPI – secured backend for meals & workouts.";
+        return "Welcome to FitMealAPI – secured backend for meals & workouts.";
     }
 }

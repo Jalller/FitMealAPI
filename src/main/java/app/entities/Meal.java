@@ -30,10 +30,10 @@ public class Meal {
     private String imageUrl;
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JsonManagedReference // ✅ Prevent infinite recursion
+    @JsonManagedReference // Prevent infinite recursion
     private List<Ingredient> ingredients;
 
-    // ✅ NEW: link meal to user
+    // NEW: link meal to user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

@@ -70,3 +70,23 @@ Authorization: Bearer {{jwt_token}}
 
 > ./meals-response.json
 > open
+
+### LOGIN (get JWT and save it as variable)
+POST https://jjldomain.dk/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "password": "password"
+}
+
+> {%
+    // Save the token from the login response as {{jwt_token}}
+    client.global.set("jwt_token", response.body.token);
+%}
+
+### GET meals (auto-insert token from login step)
+GET https://jjldomain.dk/api/meals
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsInJvbGUiOiJBREMCwiZXhwIjoxNzQzNzIzMzcwfQ.VRX5ThbyM31YtcifVGRF4hDvSUlv3LDqyzV8GS1HtxE
+
+> open in browser

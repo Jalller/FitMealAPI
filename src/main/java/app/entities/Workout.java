@@ -23,7 +23,7 @@ public class Workout {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // ✅ NEW: link workout to user
+    // NEW: link workout to user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
